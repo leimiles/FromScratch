@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Rendering;
 
 // this is the command buffer + culling + drawingGeo renderer
@@ -10,6 +12,9 @@ public class MilesRendererV4 {
     CommandBuffer buffer = new CommandBuffer { name = bufferName };
     CullingResults cullingResults;
 
+    static ShaderTagId unlitShaderTagId = new ShaderTagId("SRPDefaultUnlit");
+   
+
     public void Render(ScriptableRenderContext scriptableRenderContext, Camera camera) {
         this.scriptableRenderContext = scriptableRenderContext;
         this.camera = camera;
@@ -18,6 +23,7 @@ public class MilesRendererV4 {
         }
        
         Setup();
+        DrawGeometry();
         DrawSkybox();
         Submit();
     }
@@ -27,6 +33,13 @@ public class MilesRendererV4 {
         buffer.ClearRenderTarget(true, true, Color.clear);
         buffer.BeginSample(bufferName);
         ExecuteBuffer();
+    }
+
+    void DrawGeometry() {
+        var sortingSettings = new SortingSettings(camera);
+        var drawSettings = new DrawingSettings(unlitShaderTagId, sortingSettings);
+        var filteringSettings = new FilteringSettings(RenderQueueRange.all);
+        scriptableRenderContext.DrawRenderers(cullingResults, ref drawSettings, ref filteringSettings);
     }
 
     void DrawSkybox() {
