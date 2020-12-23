@@ -1,18 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.Rendering;
 
-// this is the command buffer renderer
-public class MilesRendererV2 {
+// this is the command buffer + culling + drawingGeo renderer
+public class MilesRendererV4 {
     ScriptableRenderContext scriptableRenderContext;
     Camera camera;
 
     const string bufferName = "A Miles Buffer";
     CommandBuffer buffer = new CommandBuffer { name = bufferName };
+    CullingResults cullingResults;
 
     public void Render(ScriptableRenderContext scriptableRenderContext, Camera camera) {
         this.scriptableRenderContext = scriptableRenderContext;
         this.camera = camera;
-        
+        if(!Cull()) {
+            return;
+        }
+       
         Setup();
         DrawSkybox();
         Submit();
@@ -38,5 +42,13 @@ public class MilesRendererV2 {
     void ExecuteBuffer() {
         scriptableRenderContext.ExecuteCommandBuffer(buffer);
         buffer.Clear();
+    }
+
+    bool Cull() {
+        if(camera.TryGetCullingParameters(out ScriptableCullingParameters p)) {
+            cullingResults = scriptableRenderContext.Cull(ref p);
+            return true;
+        }
+        return false;
     }
 }
