@@ -12,6 +12,8 @@ partial class MilesRendererV4 {
     partial void DrawGizmo();
     // partial method for drawing ui in scene view as a world geometry
     partial void PrepareForSceneWindow();
+    // partial method for drawing two cameras with its own scope
+    partial void PrepareBuffer();
 #if UNITY_EDITOR
     static ShaderTagId[] legacyShaderTagIds = {
         new ShaderTagId("Always"),
@@ -50,6 +52,10 @@ partial class MilesRendererV4 {
         if(camera.cameraType == CameraType.SceneView) {
             ScriptableRenderContext.EmitWorldGeometryForSceneView(camera);
         }
+    }
+
+    partial void PrepareBuffer() {
+        buffer.name = camera.name;
     }
 #endif
 }

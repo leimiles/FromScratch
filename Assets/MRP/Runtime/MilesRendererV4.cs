@@ -17,7 +17,7 @@ public partial class MilesRendererV4 {
     public void Render(ScriptableRenderContext scriptableRenderContext, Camera camera) {
         this.scriptableRenderContext = scriptableRenderContext;
         this.camera = camera;
-
+        PrepareBuffer();
         PrepareForSceneWindow();
 
         if(!Cull()) {
