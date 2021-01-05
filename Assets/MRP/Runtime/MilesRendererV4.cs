@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 // this is the command buffer + culling + drawingGeo renderer
-public class MilesRendererV4 {
+public partial class MilesRendererV4 {
     ScriptableRenderContext scriptableRenderContext;
     Camera camera;
 
@@ -14,17 +14,22 @@ public class MilesRendererV4 {
 
     static ShaderTagId unlitShaderTagId = new ShaderTagId("SRPDefaultUnlit");
    
-
     public void Render(ScriptableRenderContext scriptableRenderContext, Camera camera) {
         this.scriptableRenderContext = scriptableRenderContext;
         this.camera = camera;
+
+        PrepareForSceneWindow();
+
         if(!Cull()) {
             return;
         }
        
         Setup();
-        DrawGeometry();
+        DrawGeometryOpaque();
+        DrawLegacyShaders();
         DrawSkybox();
+        DrawGeometryTransparent();
+        DrawGizmo();
         Submit();
     }
 
@@ -35,11 +40,25 @@ public class MilesRendererV4 {
         ExecuteBuffer();
     }
 
-    void DrawGeometry() {
-        var sortingSettings = new SortingSettings(camera);
+    void DrawGeometryOpaque() {
+        // 保证渲染排序按照不透明的渲染方式
+        var sortingSettings = new SortingSettings(camera) { 
+            criteria = SortingCriteria.CommonOpaque
+        };
+        // 保证特定的 shader id 的 pass 会被渲染，按照预设的排序顺序
         var drawSettings = new DrawingSettings(unlitShaderTagId, sortingSettings);
-        var filteringSettings = new FilteringSettings(RenderQueueRange.all);
+        // 在 DrawRender 的时候，用 Filter 可以得到处于特定 Render Queue 的对象
+        var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
         scriptableRenderContext.DrawRenderers(cullingResults, ref drawSettings, ref filteringSettings);
+    }
+
+    void DrawGeometryTransparent() {
+        var sortingSettings = new SortingSettings(camera) {
+            criteria = SortingCriteria.CommonTransparent
+        };
+        var drawSettings = new DrawingSettings(unlitShaderTagId, sortingSettings);
+        var filterSettings = new FilteringSettings(RenderQueueRange.transparent);
+        scriptableRenderContext.DrawRenderers(cullingResults, ref drawSettings, ref filterSettings);
     }
 
     void DrawSkybox() {
