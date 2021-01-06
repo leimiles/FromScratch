@@ -1,5 +1,6 @@
 ﻿Shader "MRP/Unlit" {
 	Properties {
+		_BaseColor("BaseColor", Color) = (1, 1, 1, 1)
 	}
 	SubShader {
 		Pass {

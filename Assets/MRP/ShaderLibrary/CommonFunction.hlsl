@@ -9,7 +9,6 @@
 #define UNITY_MATRIX_V unity_MatrixV
 #define UNITY_MATRIX_VP unity_MatrixVP
 #define UNITY_MATRIX_P glstate_matrix_projection
-real4 unity_WorldTransformParams;
 
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
