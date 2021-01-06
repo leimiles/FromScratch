@@ -36,6 +36,7 @@ public partial class MilesRendererV4 {
     void Setup() {
         scriptableRenderContext.SetupCameraProperties(camera);
         CameraClearFlags flags = camera.clearFlags;
+        // if clear flag enum less than depth (2, means skybox, solid color, or depth only), clear all detph
         buffer.ClearRenderTarget(flags <= CameraClearFlags.Depth, flags == CameraClearFlags.Color, flags == CameraClearFlags.Color? camera.backgroundColor.linear : Color.clear);
         buffer.BeginSample(SampleName);
         ExecuteBuffer();
