@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Profiling;
 using UnityEditor;
 
 // this renderer is for editor renderer
@@ -24,6 +25,10 @@ partial class MilesRendererV4 {
         new ShaderTagId("VertexLM")
     };
     static Material errorMaterial;
+    string SampleName {
+        get;
+        set;
+    }
 
     partial void DrawLegacyShaders() {
         // for unsupported shader, display pink for error
@@ -55,7 +60,11 @@ partial class MilesRendererV4 {
     }
 
     partial void PrepareBuffer() {
-        buffer.name = camera.name;
+        Profiler.BeginSample("Editor Only");
+        buffer.name = SampleName = camera.name;
+        Profiler.EndSample();
     }
+#else
+    string SampleName => bufferName;
 #endif
 }
