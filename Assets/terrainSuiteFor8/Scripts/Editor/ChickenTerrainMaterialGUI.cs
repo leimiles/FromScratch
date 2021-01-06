@@ -41,16 +41,24 @@ public class ChickenTerrainMaterialGUI : ShaderGUI {
         //DoSliderBlock("_Weight02");
         GUILayout.Space(5);
 
+
         GUILayout.Label("Terrain Diffuse: ");
         GUILayout.Space(5);
         DoLayerBlock("_TexLayer01", "_Color01");
         DoLayerBlock("_TexLayer02", "_Color02");
+        DoSliderBlock("_Edge02");
         DoLayerBlock("_TexLayer03", "_Color03");
+        DoSliderBlock("_Edge03");
         DoLayerBlock("_TexLayer04", "_Color04");
+        DoSliderBlock("_Edge04");
         DoLayerBlock("_TexLayer05", "_Color05");
+        DoSliderBlock("_Edge05");
         DoLayerBlock("_TexLayer06", "_Color06");
+        DoSliderBlock("_Edge06");
         DoLayerBlock("_TexLayer07", "_Color07");
+        DoSliderBlock("_Edge07");
         DoLayerBlock("_TexLayer08", "_Color08");
+        DoSliderBlock("_Edge08");
         DoSliderBlock("_SpatLod");
         DoSliderBlock("_LayerLod");
 

@@ -1,4 +1,4 @@
-﻿Shader "SoFunny/Chicken-Terrain_v3" {
+﻿Shader "SoFunny/Chicken-Terrain_v4" {
     Properties {
         _Control01("Splatmap01", 2D) = "white" {}
         _Control02("Splatmap02", 2D) = "white" {}
@@ -21,7 +21,14 @@
         _Color06("Color06", Color) = (1, 1, 1, 1)
         _Color07("Color07", Color) = (1, 1, 1, 1)
         _Color08("Color08", Color) = (1, 1, 1, 1)
-        _Weight01("Edge Control01", Range(0.001, 1)) = 1
+        _Weight01("Edge Control", Range(0.001, 1)) = 1
+        _Edge02("Layer Edge02", Range(0.01, 0.99)) = 1
+        _Edge03("Layer Edge03", Range(0.01, 0.99)) = 1
+        _Edge04("Layer Edge04", Range(0.01, 0.99)) = 1
+        _Edge05("Layer Edge05", Range(0.01, 0.99)) = 1
+        _Edge06("Layer Edge06", Range(0.01, 0.99)) = 1
+        _Edge07("Layer Edge07", Range(0.01, 0.99)) = 1
+        _Edge08("Layer Edge08", Range(0.01, 0.99)) = 1
         //_Weight02("Edge Control02", Range(0.1, 1)) = 0
         _SpatLod("Splat LOD", Range(0, 10)) = 0
         _LayerLod("Layer LOD", Range(0, 10)) = 0

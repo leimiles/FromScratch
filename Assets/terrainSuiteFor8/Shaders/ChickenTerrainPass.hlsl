@@ -68,16 +68,49 @@ void GetControlValueV3(half weight, half4 controlColor01, half4 controlColor02, 
     half4 controlValue01 = controlColor01;
     half4 controlValue02 = controlColor02;
     half4 mixedColor = controlColor01 + controlColor02;
-    half maxChannel = max(controlValue01.r, max(controlValue01.g, max(controlValue01.b, max(controlValue01.a, max(controlValue02.r, max(controlValue02.g, max(controlValue02.b, controlValue02.a)))))));
+    half s1 = controlValue01.r;
+    half s2 = controlValue01.g;
+    half s3 = controlValue01.b;
+    half s4 = controlValue01.a;
+    half s5 = controlValue02.r;
+    half s6 = controlValue02.g;
+    half s7 = controlValue02.b;
+    half s8 = controlValue02.a;
+    half maxChannel = max(s1, max(s2, max(s3, max(s4, max(s5, max(s6, max(s7, s8)))))));
     half4 maxControl01 = controlValue01 - maxChannel;
     half4 maxControl02 = controlValue02 - maxChannel;
-    half4 withWeight01 = max(maxControl01 + weight, half4(0, 0, 0, 0)) * (controlColor01);
-    half4 withWeight02 = max(maxControl02 + weight, half4(0, 0, 0, 0)) * (controlColor02);
+    half4 withWeight01 = max(maxControl01 + weight, half4(0, 0, 0, 0)) * controlColor01;
+    half4 withWeight02 = max(maxControl02 + weight, half4(0, 0, 0, 0)) * controlColor02;
     half4 finalValue01 = withWeight01 / (withWeight01.r + withWeight01.g + withWeight01.b + withWeight01.a + withWeight02.r + withWeight02.g + withWeight02.b + withWeight02.a);
     half4 finalValue02 = withWeight02 / (withWeight02.r + withWeight02.g + withWeight02.b + withWeight02.a + withWeight01.r + withWeight01.g + withWeight01.b + withWeight01.a);
     splat01 = saturate(finalValue01);
     splat02 = saturate(finalValue02);
 }
+
+// get control value which indicates how r g b a color mixes
+void GetControlValueV4(half weight, half4 controlColor01, half4 controlColor02, out half4 splat01, out half4 splat02) {
+    half4 controlValue01 = controlColor01;
+    half4 controlValue02 = controlColor02;
+    half4 mixedColor = controlColor01 + controlColor02;
+    half s1 = controlValue01.r;
+    half s2 = controlValue01.g = smoothstep(0, _Edge02, controlValue01.g) * _Edge02 * 3.0;
+    half s3 = controlValue01.b = smoothstep(0, _Edge03, controlValue01.b) * _Edge03 * 3.0;
+    half s4 = controlValue01.a = smoothstep(0, _Edge04, controlValue01.a) * _Edge04 * 3.0;
+    half s5 = controlValue02.r = smoothstep(0, _Edge05, controlValue02.r) * _Edge05 * 3.0;
+    half s6 = controlValue02.g = smoothstep(0, _Edge06, controlValue02.g) * _Edge06 * 3.0;
+    half s7 = controlValue02.b = smoothstep(0, _Edge07, controlValue02.b) * _Edge07 * 3.0;
+    half s8 = controlValue02.a = smoothstep(0, _Edge08, controlValue02.a) * _Edge08 * 3.0;
+    half maxChannel = max(s1, max(s2, max(s3, max(s4, max(s5, max(s6, max(s7, s8)))))));
+    half4 maxControl01 = controlValue01 - maxChannel;
+    half4 maxControl02 = controlValue02 - maxChannel;
+    half4 withWeight01 = max(maxControl01 + weight, half4(0, 0, 0, 0)) * controlColor01;
+    half4 withWeight02 = max(maxControl02 + weight, half4(0, 0, 0, 0)) * controlColor02;
+    half4 finalValue01 = withWeight01 / (withWeight01.r + withWeight01.g + withWeight01.b + withWeight01.a + withWeight02.r + withWeight02.g + withWeight02.b + withWeight02.a);
+    half4 finalValue02 = withWeight02 / (withWeight02.r + withWeight02.g + withWeight02.b + withWeight02.a + withWeight01.r + withWeight01.g + withWeight01.b + withWeight01.a);
+    splat01 = saturate(finalValue01);
+    splat02 = saturate(finalValue02);
+}
+
 
 v2f vert(a2v v) {
 	v2f o = (v2f)0;
@@ -133,7 +166,7 @@ half4 frag(v2f i) : SV_TARGET {
     half4 controlColor02 = SAMPLE_TEXTURE2D_LOD(_Control02, sampler_Control02, i.uv, _SpatLod);
     half4 splat01;
     half4 splat02;
-    GetControlValueV3(_Weight01, controlColor01, controlColor02, splat01, splat02);
+    GetControlValueV4(_Weight01, controlColor01, controlColor02, splat01, splat02);
 
     half4 layer01 = SAMPLE_TEXTURE2D_LOD(_TexLayer01, sampler_TexLayer01, i.uvL1L2.xy, _LayerLod) * _Color01;
     layer01 *= splat01.r;
