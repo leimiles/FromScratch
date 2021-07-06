@@ -16,6 +16,9 @@ public class SimpleRenderer  {
         new ShaderTagId("VertexLMRGBM"),
         new ShaderTagId("VertexLM"),
     };
+
+    static Material overrideMaterial;
+
     public void Render(ScriptableRenderContext context, Camera camera) {
 
 
@@ -50,27 +53,31 @@ public class SimpleRenderer  {
         // use context to draw sky
         context.DrawSkybox(camera);
 
+        // draw transparent
         sortingSettings.criteria = SortingCriteria.CommonTransparent;
         drawingSettings.sortingSettings = sortingSettings;
         filterSettings.renderQueueRange = RenderQueueRange.transparent;
         context.DrawRenderers(cullingResults, ref drawingSettings, ref filterSettings);
 
-        // sample ends here
-        commandBuffer.EndSample("JustClear");
-
-        context.ExecuteCommandBuffer(commandBuffer);
-        commandBuffer.Clear();
-
-
-
+        
         // draw unsupportedShaders
+        if(overrideMaterial == null) {
+            overrideMaterial = new Material(Shader.Find("Hidden/InternalErrorShader"));
+        }
         sortingSettings.criteria = SortingCriteria.CommonOpaque;
-        drawingSettings = new DrawingSettings(legacyShaderTagIDs[0], sortingSettings);
+        drawingSettings = new DrawingSettings(legacyShaderTagIDs[0], sortingSettings) {
+            overrideMaterial = overrideMaterial
+        };
         for(int i = 1; i < legacyShaderTagIDs.Length; i++) {
             drawingSettings.SetShaderPassName(i, legacyShaderTagIDs[i]);
         }
         filterSettings = FilteringSettings.defaultValue;
         context.DrawRenderers(cullingResults, ref drawingSettings, ref filterSettings);
+
+        // sample ends here
+        commandBuffer.EndSample("JustClear");
+        context.ExecuteCommandBuffer(commandBuffer);
+        commandBuffer.Clear();
 
         context.Submit();
     }
