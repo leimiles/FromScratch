@@ -116,3 +116,4 @@ crashlytics-build.properties
 !/Library/NetCode/
 !/Library/NetCode/settings.asset
 Library/NetCode/generatedfiles.asset
+ProjectSettings/ProjectVersion.txt
