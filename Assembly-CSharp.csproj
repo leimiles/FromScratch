@@ -37,6 +37,8 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\MRP\Runtime\MilesRenderingPipeline.cs" />
+     <Compile Include="Assets\MRP\Runtime\MilesRenderingPipelineAsset.cs" />
+     <Compile Include="Assets\MRP\Runtime\MilesRenderer.cs" />
     <Reference Include="UnityEngine">
         <HintPath>F:/Program Files/UnityEditor/2020.2.3f1/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
