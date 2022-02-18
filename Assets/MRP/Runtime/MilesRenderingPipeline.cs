@@ -4,8 +4,10 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class MilesRenderingPipeline : RenderPipelineAsset {
-    protected override RenderPipeline CreatePipeline() {
-        return null;
+namespace mrp {
+    public class MilesRenderingPipeline : RenderPipelineAsset {
+        protected override RenderPipeline CreatePipeline() {
+            return null;
+        }
     }
 }
