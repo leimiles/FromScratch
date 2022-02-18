@@ -1,0 +1,6 @@
+﻿*.sln
+.vscode
+Library
+Logs
+Temp
+obj/Debug
