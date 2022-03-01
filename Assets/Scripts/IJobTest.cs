@@ -6,6 +6,16 @@ using Unity.Mathematics;
 using Unity.Burst;
 using Unity.Collections;
 
+[BurstCompile]
+struct MyTask_Job : IJob {
+    public void Execute() {
+        float value = 0.0f;
+        for (int i = 0; i < 50000; i++) {
+            value = math.exp10(math.sqrt(value));
+        }
+    }
+}
+
 public class IJobTest : MonoBehaviour {
     [SerializeField]
     private bool isJobOn;
@@ -39,15 +49,5 @@ public class IJobTest : MonoBehaviour {
         MyTask_Job myTask_Job = new MyTask_Job();
         return myTask_Job.Schedule();
     }
-
 }
 
-//[BurstCompile]
-struct MyTask_Job : IJob {
-    public void Execute() {
-        float value = 0.0f;
-        for (int i = 0; i < 50000; i++) {
-            value = math.exp10(math.sqrt(value));
-        }
-    }
-}
