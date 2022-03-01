@@ -5,3 +5,5 @@ Logs
 Temp
 obj/Debug
 *.csproj
+.vsconfig
+.vs
