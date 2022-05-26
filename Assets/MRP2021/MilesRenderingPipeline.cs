@@ -8,5 +8,8 @@ namespace MRP {
         protected override void Render(ScriptableRenderContext context, Camera[] cameras) {
             throw new System.NotImplementedException();
         }
+
+        public MilesRenderingPipeline(MilesRenderingPipelineAsset milesRenderingPipelineAsset) {
+        }
     }
 }
