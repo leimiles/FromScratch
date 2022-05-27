@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace MRP {
+namespace MilesRenderingPipeline {
     public sealed partial class MilesRenderingPipeline : RenderPipeline {
         protected override void Render(ScriptableRenderContext context, Camera[] cameras) {
-            throw new System.NotImplementedException();
         }
 
         public MilesRenderingPipeline(MilesRenderingPipelineAsset milesRenderingPipelineAsset) {
