@@ -17,6 +17,8 @@ namespace MilesRenderingPipeline {
     }
     public struct CameraData {
         public bool postProcessEnabled;
+        public MilesScriptableRenderer renderer;
+        public Camera camera;
     }
 
 }

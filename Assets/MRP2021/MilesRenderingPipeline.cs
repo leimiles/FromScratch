@@ -28,18 +28,30 @@ namespace MilesRenderingPipeline {
         public static void RenderSingleCamera(ScriptableRenderContext context, Camera camera) {
             InitializeCameraData(camera, null, true, out var cameraData);
             RenderSingleCamera(context, cameraData, cameraData.postProcessEnabled);
-
         }
 
         // as it says
         static void InitializeCameraData(Camera camera, MilesAdditionalCameraData milesAdditionalCameraData, bool resolveFinalTarget, out CameraData cameraData) {
             cameraData = new CameraData();
+            InitializeAdditionalCameraData(camera, milesAdditionalCameraData, resolveFinalTarget, ref cameraData);
+        }
+
+        static void InitializeAdditionalCameraData(Camera camera, MilesAdditionalCameraData milesAdditionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
+            cameraData.camera = camera;
         }
 
         // single camera rendering happens here
         static void RenderSingleCamera(ScriptableRenderContext context, CameraData cameraData, bool anyPostProcessingEnabled) {
+            Camera camera = cameraData.camera;
+            var renderer = cameraData.renderer;
+            if (renderer == null) {
+                Debug.LogWarning(string.Format("Trying to render{0} with an invalid renderer, this camera will be skipped.", camera.name));
+                return;
+            }
             CommandBuffer cmd = CommandBufferPool.Get();
             context.ExecuteCommandBuffer(cmd);
+            cmd.Clear();
+
             CommandBufferPool.Release(cmd);
             context.Submit();
 
@@ -50,7 +62,7 @@ namespace MilesRenderingPipeline {
             Render(context, new List<Camera>(cameras));
         }
 
-        // init via mrp asset
+        // constructor, init via mrp asset
         public MilesRenderingPipeline(MilesRenderingPipelineAsset milesRenderingPipelineAsset) {
         }
     }
