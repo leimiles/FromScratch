@@ -6,14 +6,6 @@ using System;
 
 namespace MilesRenderingPipeline {
     public sealed partial class MilesRenderingPipeline {
-        private static class Profiling {
-            public static class Pipeline {
-                // nameof 
-                public static readonly ProfilingSampler beginContextRendering = new ProfilingSampler($"{nameof(RenderPipeline)}.{nameof(BeginContextRendering)}");
-
-            }
-
-        }
         Comparison<Camera> cameraComparision = (camera1, camera2) => { return (int)camera1.depth - (int)camera2.depth; };
         void SortCameras(List<Camera> cameras) {
             if (cameras.Count > 1) {
@@ -23,7 +15,8 @@ namespace MilesRenderingPipeline {
         }
 
     }
-    internal enum MilesRenderingPipelineProfileID {
-        MilesRenderTotal
+    public struct CameraData {
+        public bool postProcessEnabled;
     }
+
 }

@@ -12,7 +12,7 @@ namespace MilesRenderingPipeline {
         public enum MilesRendererType {
             MilesRenderer
         }
-        Shader miles_DefaultShader;
+
         protected override RenderPipeline CreatePipeline() {
             return new MilesRenderingPipeline(this);
         }
