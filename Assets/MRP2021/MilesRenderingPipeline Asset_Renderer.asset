@@ -9,6 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f348c08967f416f44af574ca8ed37e18, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d0928e773c92d94fae2410be307767d, type: 3}
   m_Name: MilesRenderingPipeline Asset_Renderer
   m_EditorClassIdentifier: 

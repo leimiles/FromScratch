@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace MilesRenderingPipeline {
-    public class MilesScriptableRenderingData : ScriptableObject {
+    public abstract class ScriptableRendererData : ScriptableObject {
+
     }
 }

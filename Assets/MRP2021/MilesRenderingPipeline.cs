@@ -38,6 +38,7 @@ namespace MilesRenderingPipeline {
 
         static void InitializeAdditionalCameraData(Camera camera, MilesAdditionalCameraData milesAdditionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
             cameraData.camera = camera;
+            cameraData.renderer = asset.scriptableRenderer;
         }
 
         // single camera rendering happens here
@@ -45,16 +46,9 @@ namespace MilesRenderingPipeline {
             Camera camera = cameraData.camera;
             var renderer = cameraData.renderer;
             if (renderer == null) {
-                Debug.LogWarning(string.Format("Trying to render{0} with an invalid renderer, this camera will be skipped.", camera.name));
+                Debug.LogWarning(string.Format("Trying to render {0} with an invalid renderer. Camera rendering will be skipped.", camera.name));
                 return;
             }
-            CommandBuffer cmd = CommandBufferPool.Get();
-            context.ExecuteCommandBuffer(cmd);
-            cmd.Clear();
-
-            CommandBufferPool.Release(cmd);
-            context.Submit();
-
         }
 
         // the old way entry point for rendering camera list

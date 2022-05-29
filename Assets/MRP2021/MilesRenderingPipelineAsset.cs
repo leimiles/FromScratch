@@ -9,8 +9,22 @@ using System.IO;
 namespace MilesRenderingPipeline {
     // mrp Asset
     public class MilesRenderingPipelineAsset : RenderPipelineAsset, ISerializationCallbackReceiver {
+        ScriptableRenderer[] m_Renderers = new ScriptableRenderer[1];
+        // different rendererType
         public enum MilesRendererType {
             MilesRenderer
+        }
+
+        public ScriptableRenderer scriptableRenderer {
+            get {
+                return m_Renderers[0];
+            }
+        }
+
+        // 
+        public static MilesRenderingPipelineAsset Create(ScriptableRendererData rendererData = null) {
+            var instance = CreateInstance<MilesRenderingPipelineAsset>();
+            return instance;
         }
 
         protected override RenderPipeline CreatePipeline() {
@@ -30,46 +44,45 @@ namespace MilesRenderingPipeline {
         }
 
         // create renderer asset, this asset will be created while the mrp is created
-        internal static MilesScriptableRenderingData CreateMilesRendererAsset(string path, MilesRendererType type, bool relativePath = true, string suffix = "Renderer") {
-            // different renderer type for different renderer asset
-            MilesScriptableRenderingData data = CreateRendererData(type);
+
+
+        // renderer asset is ditinguished here
+        internal static ScriptableRendererData CreateRendererAsset(string path, MilesRendererType type, bool relativePath = true, string suffix = "Renderer") {
+            ScriptableRendererData data = CreateRendererData(type);
             string dataPath;
             if (relativePath) {
                 dataPath = $"{Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path))}_{suffix}{Path.GetExtension(path)}";
-
             } else {
                 dataPath = path;
             }
             AssetDatabase.CreateAsset(data, dataPath);
-            // ResourceReloader.ReloadAllNullIn ?
+
             return data;
         }
 
-        // renderer asset is ditinguished here
-        static MilesScriptableRenderingData CreateRendererData(MilesRendererType type) {
+        // get rendererData Instance
+        static ScriptableRendererData CreateRendererData(MilesRendererType type) {
             switch (type) {
                 case MilesRendererType.MilesRenderer:
                 default: {
-                        var rendererData = CreateInstance<MilesScriptableRenderingData>();
+                        var rendererData = CreateInstance<MilesRendererData>();
                         return rendererData;
                     }
             }
         }
 
 
-        static MilesRenderingPipelineAsset Create(MilesScriptableRenderingData renderingData = null) {
-            var instance = CreateInstance<MilesRenderingPipelineAsset>();
-            return instance;
 
-        }
 
         // use a class to handle generation of mrp asset
         internal class CreateMilesRenderingPipelineAsset : EndNameEditAction {
             public override void Action(int instanceId, string pathName, string resourceFile) {
-                AssetDatabase.CreateAsset(Create(CreateMilesRendererAsset(pathName, MilesRendererType.MilesRenderer)), pathName);
-            }
 
+                AssetDatabase.CreateAsset(Create(CreateRendererAsset(pathName, MilesRendererType.MilesRenderer)), pathName);
+            }
         }
+
+
 
 
     }
