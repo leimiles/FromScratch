@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace MilesRenderingPipeline {
     public abstract class ScriptableRendererData : ScriptableObject {
+        protected abstract ScriptableRenderer Create();
+        internal ScriptableRenderer InternalCreateRenderer() {
+            return Create();
+        }
 
     }
 }

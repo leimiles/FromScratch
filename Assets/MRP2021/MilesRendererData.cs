@@ -14,5 +14,10 @@ namespace MilesRenderingPipeline {
 
         }
 
+        protected override ScriptableRenderer Create() {
+            if (!Application.isPlaying) {
+            }
+            return new MilesRenderer(this);
+        }
     }
 }

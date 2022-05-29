@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace MilesRenderingPipeline {
-    public class ScriptableRenderer {
-        public ScriptableRenderer(ScriptableRendererData data) {
+    public class MilesRenderer : ScriptableRenderer {
+        public MilesRenderer(MilesRendererData data) : base(data) {
 
         }
     }
