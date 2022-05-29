@@ -49,6 +49,28 @@ namespace MilesRenderingPipeline {
                 Debug.LogWarning(string.Format("Trying to render {0} with an invalid renderer. Camera rendering will be skipped.", camera.name));
                 return;
             }
+            if (!TryGetCullingParameters(cameraData, out var cullingParameters)) {
+                return;
+            }
+
+            ScriptableRenderer.current = renderer;
+            bool isSceneViewCamera = cameraData.isSceneViewCamera;
+            CommandBuffer cmd = CommandBufferPool.Get();
+            renderer.ClearTarget(cameraData.renderType);
+            renderer.OnPreCullRenderPasses(in cameraData);
+            renderer.SetupCullingParameters(ref cullingParameters, ref cameraData);
+            context.ExecuteCommandBuffer(cmd);
+            /*
+#if UNITY_EDITOR
+            // enable scene view UI
+            if (isSceneViewCamera) {
+                ScriptableRenderContext.EmitWorldGeometryForSceneView(camera);
+            }
+#endif
+            */
+            var cullResults = context.Cull(ref cullingParameters);
+            InitializeRenderingData(asset, ref cameraData, ref cullResults, anyPostProcessingEnabled, out var renderingData);
+            context.Submit();
         }
 
         // the old way entry point for rendering camera list
@@ -56,8 +78,17 @@ namespace MilesRenderingPipeline {
             Render(context, new List<Camera>(cameras));
         }
 
+        static bool TryGetCullingParameters(CameraData cameraData, out ScriptableCullingParameters cullingParameters) {
+            return cameraData.camera.TryGetCullingParameters(false, out cullingParameters);
+        }
+
+        static void InitializeRenderingData(MilesRenderingPipelineAsset asset, ref CameraData cameraData, ref CullingResults cullingResults, bool anyPostProcessingEnabled, out RenderingData renderingData) {
+
+        }
+
         // constructor, init via mrp asset
         public MilesRenderingPipeline(MilesRenderingPipelineAsset milesRenderingPipelineAsset) {
         }
+
     }
 }

@@ -19,9 +19,17 @@ namespace MilesRenderingPipeline {
 
     }
     public struct CameraData {
+        public Camera camera;
+        public CameraRenderType renderType;
+        public CameraType cameraType;
         public bool postProcessEnabled;
         public ScriptableRenderer renderer;
-        public Camera camera;
+
+        public bool isSceneViewCamera => cameraType == CameraType.SceneView;
+    }
+
+    public struct RenderingData {
+
     }
 
 }
