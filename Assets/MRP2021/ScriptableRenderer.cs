@@ -5,6 +5,8 @@ using UnityEngine.Rendering;
 
 namespace MilesRenderingPipeline {
     public class ScriptableRenderer {
+        internal bool isCameraColorTargetValid = false;
+        internal bool useRenderPassEnabled = false;
         internal static ScriptableRenderer current = null;
         static RenderTargetIdentifier[] m_ActiveColorAttachments = new RenderTargetIdentifier[] { 0, 0, 0, 0, 0, 0, 0, 0 };
         static RenderTargetIdentifier m_ActiveDepthAttachment;
@@ -36,7 +38,15 @@ namespace MilesRenderingPipeline {
         }
 
         public virtual void SetupCullingParameters(ref ScriptableCullingParameters cullingParameters, ref CameraData cameraData) {
-            // culling parameters must be set by child class
+            // implemented by child class
+        }
+
+        public virtual void Setup(ScriptableRenderContext context, ref RenderingData renderingData) {
+            // implemented by child class
+        }
+
+        protected void AddRenderPasses(ref RenderingData renderingData) {
+
         }
     }
 }

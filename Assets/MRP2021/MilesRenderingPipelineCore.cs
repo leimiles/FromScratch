@@ -24,12 +24,14 @@ namespace MilesRenderingPipeline {
         public CameraType cameraType;
         public bool postProcessEnabled;
         public ScriptableRenderer renderer;
+        public RenderTextureDescriptor cameraTargetDescriptor;
 
         public bool isSceneViewCamera => cameraType == CameraType.SceneView;
     }
 
     public struct RenderingData {
-
+        public CullingResults cullingResults;
+        public CameraData cameraData;
     }
 
 }

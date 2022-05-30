@@ -70,6 +70,7 @@ namespace MilesRenderingPipeline {
             */
             var cullResults = context.Cull(ref cullingParameters);
             InitializeRenderingData(asset, ref cameraData, ref cullResults, anyPostProcessingEnabled, out var renderingData);
+            renderer.Setup(context, ref renderingData);
             context.Submit();
         }
 
@@ -83,7 +84,8 @@ namespace MilesRenderingPipeline {
         }
 
         static void InitializeRenderingData(MilesRenderingPipelineAsset asset, ref CameraData cameraData, ref CullingResults cullingResults, bool anyPostProcessingEnabled, out RenderingData renderingData) {
-
+            renderingData.cullingResults = cullingResults;
+            renderingData.cameraData = cameraData;
         }
 
         // constructor, init via mrp asset
