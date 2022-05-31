@@ -17,6 +17,20 @@ namespace MilesRenderingPipeline {
 
         }
 
+        static RenderTextureDescriptor CreateRenderTextureDescriptor(Camera camera) {
+            RenderTextureDescriptor desc;
+            if (camera.targetTexture == null) {
+                desc = new RenderTextureDescriptor(camera.pixelWidth, camera.pixelHeight);
+            } else {
+                desc = camera.targetTexture.descriptor;
+                desc.width = camera.pixelWidth;
+                desc.height = camera.pixelHeight;
+            }
+            desc.width = Mathf.Max(1, desc.width);
+            desc.height = Mathf.Max(1, desc.height);
+            return desc;
+        }
+
     }
     public struct CameraData {
         public Camera camera;
@@ -25,7 +39,6 @@ namespace MilesRenderingPipeline {
         public bool postProcessEnabled;
         public ScriptableRenderer renderer;
         public RenderTextureDescriptor cameraTargetDescriptor;
-
         public bool isSceneViewCamera => cameraType == CameraType.SceneView;
     }
 

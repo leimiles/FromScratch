@@ -27,7 +27,7 @@ namespace MilesRenderingPipeline {
             // rt info for creating render texture
             RenderTextureDescriptor cameraTargetDescriptor = cameraData.cameraTargetDescriptor;
 
-
+            // for not-game views, disable all render passes
             if (cameraData.cameraType != CameraType.Game) {
                 useRenderPassEnabled = false;
             }
@@ -36,8 +36,6 @@ namespace MilesRenderingPipeline {
             isCameraColorTargetValid = true;
             AddRenderPasses(ref renderingData);
             isCameraColorTargetValid = false;
-
-
         }
     }
 }

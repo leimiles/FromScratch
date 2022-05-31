@@ -34,6 +34,7 @@ namespace MilesRenderingPipeline {
         static void InitializeCameraData(Camera camera, MilesAdditionalCameraData milesAdditionalCameraData, bool resolveFinalTarget, out CameraData cameraData) {
             cameraData = new CameraData();
             InitializeAdditionalCameraData(camera, milesAdditionalCameraData, resolveFinalTarget, ref cameraData);
+            cameraData.cameraTargetDescriptor = CreateRenderTextureDescriptor(camera);
         }
 
         static void InitializeAdditionalCameraData(Camera camera, MilesAdditionalCameraData milesAdditionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
