@@ -8,22 +8,19 @@ using UnityEditor;
 using ShaderKeywordFilter = UnityEditor.ShaderKeywordFilter;
 #endif
 
-namespace UnityEngine.Rendering.Universal
-{
+namespace UnityEngine.Rendering.Universal {
     /// <summary>
     /// Class <c>ScriptableRendererData</c> contains resources for a <c>ScriptableRenderer</c>.
     /// <seealso cref="ScriptableRenderer"/>
     /// </summary>
-    public abstract class ScriptableRendererData : ScriptableObject
-    {
+    public abstract class ScriptableRendererData : ScriptableObject {
         internal bool isInvalidated { get; set; }
 
         /// <summary>
         /// Class contains references to shader resources used by Rendering Debugger.
         /// </summary>
         [Serializable, ReloadGroup]
-        public sealed class DebugShaderResources
-        {
+        public sealed class DebugShaderResources {
             /// <summary>
             /// Debug shader used to output interpolated vertex attributes.
             /// </summary>
@@ -52,8 +49,7 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// List of additional render pass features for this renderer.
         /// </summary>
-        public List<ScriptableRendererFeature> rendererFeatures
-        {
+        public List<ScriptableRendererFeature> rendererFeatures {
             get => m_RendererFeatures;
         }
 
@@ -61,19 +57,16 @@ namespace UnityEngine.Rendering.Universal
         /// Use SetDirty when changing seeings in the ScriptableRendererData.
         /// It will rebuild the render passes with the new data.
         /// </summary>
-        public new void SetDirty()
-        {
+        public new void SetDirty() {
             isInvalidated = true;
         }
 
-        internal ScriptableRenderer InternalCreateRenderer()
-        {
+        internal ScriptableRenderer InternalCreateRenderer() {
             isInvalidated = false;
             return Create();
         }
 
-        protected virtual void OnValidate()
-        {
+        protected virtual void OnValidate() {
             SetDirty();
 #if UNITY_EDITOR
             if (m_RendererFeatures.Contains(null))
@@ -81,16 +74,13 @@ namespace UnityEngine.Rendering.Universal
 #endif
         }
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
             SetDirty();
         }
 
-        public bool useNativeRenderPass
-        {
+        public bool useNativeRenderPass {
             get => m_UseNativeRenderPass;
-            set
-            {
+            set {
                 SetDirty();
                 m_UseNativeRenderPass = value;
             }
@@ -101,12 +91,9 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <typeparam name="T">Renderer Feature type.</typeparam>
         /// <returns></returns>
-        internal bool TryGetRendererFeature<T>(out T rendererFeature) where T : ScriptableRendererFeature
-        {
-            foreach (var target in rendererFeatures)
-            {
-                if (target.GetType() == typeof(T))
-                {
+        internal bool TryGetRendererFeature<T>(out T rendererFeature) where T : ScriptableRendererFeature {
+            foreach (var target in rendererFeatures) {
+                if (target.GetType() == typeof(T)) {
                     rendererFeature = target as T;
                     return true;
                 }
@@ -116,18 +103,15 @@ namespace UnityEngine.Rendering.Universal
         }
 
 #if UNITY_EDITOR
-        internal virtual Material GetDefaultMaterial(DefaultMaterialType materialType)
-        {
+        internal virtual Material GetDefaultMaterial(DefaultMaterialType materialType) {
             return null;
         }
 
-        internal virtual Shader GetDefaultShader()
-        {
+        internal virtual Shader GetDefaultShader() {
             return null;
         }
 
-        internal bool ValidateRendererFeatures()
-        {
+        internal bool ValidateRendererFeatures() {
             // Get all Subassets
             var subassets = AssetDatabase.LoadAllAssetsAtPath(AssetDatabase.GetAssetPath(this));
             var linkedIds = new List<long>();
@@ -136,8 +120,7 @@ namespace UnityEngine.Rendering.Universal
             var debugOutput = $"{name}\nValid Sub-assets:\n";
 
             // Collect valid, compiled sub-assets
-            foreach (var asset in subassets)
-            {
+            foreach (var asset in subassets) {
                 if (asset == null || asset.GetType().BaseType != typeof(ScriptableRendererFeature)) continue;
                 AssetDatabase.TryGetGUIDAndLocalFileIdentifier(asset, out var guid, out long localId);
                 loadedAssets.Add(localId, asset);
@@ -145,11 +128,9 @@ namespace UnityEngine.Rendering.Universal
             }
 
             // Collect assets that are connected to the list
-            for (var i = 0; i < m_RendererFeatures?.Count; i++)
-            {
+            for (var i = 0; i < m_RendererFeatures?.Count; i++) {
                 if (!m_RendererFeatures[i]) continue;
-                if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(m_RendererFeatures[i], out var guid, out long localId))
-                {
+                if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(m_RendererFeatures[i], out var guid, out long localId)) {
                     linkedIds.Add(localId);
                 }
             }
@@ -158,18 +139,13 @@ namespace UnityEngine.Rendering.Universal
             debugOutput += $"Feature List Status({mapDebug}):\n";
 
             // Try fix missing references
-            for (var i = 0; i < m_RendererFeatures?.Count; i++)
-            {
-                if (m_RendererFeatures[i] == null)
-                {
-                    if (mapValid && m_RendererFeatureMap[i] != 0)
-                    {
+            for (var i = 0; i < m_RendererFeatures?.Count; i++) {
+                if (m_RendererFeatures[i] == null) {
+                    if (mapValid && m_RendererFeatureMap[i] != 0) {
                         var localId = m_RendererFeatureMap[i];
                         loadedAssets.TryGetValue(localId, out var asset);
                         m_RendererFeatures[i] = (ScriptableRendererFeature)asset;
-                    }
-                    else
-                    {
+                    } else {
                         m_RendererFeatures[i] = (ScriptableRendererFeature)GetUnusedAsset(ref linkedIds, ref loadedAssets);
                     }
                 }
@@ -186,16 +162,13 @@ namespace UnityEngine.Rendering.Universal
             return false;
         }
 
-        internal bool DuplicateFeatureCheck(Type type)
-        {
+        internal bool DuplicateFeatureCheck(Type type) {
             var isSingleFeature = type.GetCustomAttribute(typeof(DisallowMultipleRendererFeature));
             return isSingleFeature != null && m_RendererFeatures.Select(renderFeature => renderFeature.GetType()).Any(t => t == type);
         }
 
-        private static object GetUnusedAsset(ref List<long> usedIds, ref Dictionary<long, object> assets)
-        {
-            foreach (var asset in assets)
-            {
+        private static object GetUnusedAsset(ref List<long> usedIds, ref Dictionary<long, object> assets) {
+            foreach (var asset in assets) {
                 var alreadyLinked = usedIds.Any(used => asset.Key == used);
 
                 if (alreadyLinked)
@@ -208,16 +181,13 @@ namespace UnityEngine.Rendering.Universal
             return null;
         }
 
-        private void UpdateMap()
-        {
-            if (m_RendererFeatureMap.Count != m_RendererFeatures.Count)
-            {
+        private void UpdateMap() {
+            if (m_RendererFeatureMap.Count != m_RendererFeatures.Count) {
                 m_RendererFeatureMap.Clear();
                 m_RendererFeatureMap.AddRange(new long[m_RendererFeatures.Count]);
             }
 
-            for (int i = 0; i < rendererFeatures.Count; i++)
-            {
+            for (int i = 0; i < rendererFeatures.Count; i++) {
                 if (m_RendererFeatures[i] == null) continue;
                 if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(m_RendererFeatures[i], out var guid, out long localId)) continue;
 
