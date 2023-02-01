@@ -31,11 +31,10 @@ namespace UnityEngine.Miles.Rendering {
         static void CreateMilesPipeline() {
             // 以指定名称创建 asset 后，允许重命名
             ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, CreateInstance<CreateMilesPipelineAsset>(), "Miles Render Pipeline Asset.asset", null, null);
-
         }
 
         // 创建渲染管线 asset 实例并返回
-        public static MilesRenderPipelineAsset Create() {
+        public static MilesRenderPipelineAsset Create(MilesRendererData rendererData = null) {
             var instance = CreateInstance<MilesRenderPipelineAsset>();
             return instance;
         }
