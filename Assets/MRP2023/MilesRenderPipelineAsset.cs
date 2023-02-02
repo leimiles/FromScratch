@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.ProjectWindowCallback;
+#endif
 
 namespace UnityEngine.Miles.Rendering {
     // 渲染类型，即 ScriptableRenderer
@@ -25,7 +27,7 @@ namespace UnityEngine.Miles.Rendering {
 
         // 返回渲染管线的实例，渲染管线会按照该实例的 Render() 函数安排渲染流程
         protected override RenderPipeline CreatePipeline() {
-            var pipeline = new MilesRenderPipeline();
+            var pipeline = new MilesRenderPipeline(this);
             return pipeline;
         }
 
