@@ -588,7 +588,6 @@ namespace UnityEngine.Rendering.Universal {
                 for (int i = 0; i < cameraStack.Count; ++i) {
                     Camera currCamera = cameraStack[i];
                     if (currCamera == null) {
-                        Debug.Log(currCamera.name);
                         shouldUpdateCameraStack = true;
                         continue;
                     }
@@ -681,6 +680,7 @@ namespace UnityEngine.Rendering.Universal {
                 // update the base camera flag so that the scene depth is stored if needed by overlay cameras later in the frame
                 baseCameraData.postProcessingRequiresDepthTexture |= cameraStackRequiresDepthForPostprocessing;
 
+                // miles, begin camera rendering
                 RenderSingleCamera(context, ref baseCameraData, anyPostProcessingEnabled);
                 using (new ProfilingScope(null, Profiling.Pipeline.endCameraRendering)) {
                     EndCameraRendering(context, baseCamera);

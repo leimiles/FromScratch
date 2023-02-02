@@ -7,26 +7,21 @@ using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.Experimental.Rendering;
 using Lightmapping = UnityEngine.Experimental.GlobalIllumination.Lightmapping;
 
-namespace UnityEngine.Rendering.Universal
-{
-    static class NativeArrayExtensions
-    {
+namespace UnityEngine.Rendering.Universal {
+    static class NativeArrayExtensions {
         /// <summary>
         /// IMPORTANT: Make sure you do not write to the value! There are no checks for this!
         /// </summary>
-        public static unsafe ref T UnsafeElementAt<T>(this NativeArray<T> array, int index) where T : struct
-        {
+        public static unsafe ref T UnsafeElementAt<T>(this NativeArray<T> array, int index) where T : struct {
             return ref UnsafeUtility.ArrayElementAsRef<T>(array.GetUnsafeReadOnlyPtr(), index);
         }
 
-        public static unsafe ref T UnsafeElementAtMutable<T>(this NativeArray<T> array, int index) where T : struct
-        {
+        public static unsafe ref T UnsafeElementAtMutable<T>(this NativeArray<T> array, int index) where T : struct {
             return ref UnsafeUtility.ArrayElementAsRef<T>(array.GetUnsafePtr(), index);
         }
     }
 
-    public enum MixedLightingSetup
-    {
+    public enum MixedLightingSetup {
         None,
         ShadowMask,
         Subtractive,
@@ -35,8 +30,7 @@ namespace UnityEngine.Rendering.Universal
     /// <summary>
     /// Enumeration that indicates what kind of image scaling is occurring if any
     /// </summary>
-    internal enum ImageScalingMode
-    {
+    internal enum ImageScalingMode {
         /// No scaling
         None,
 
@@ -50,8 +44,7 @@ namespace UnityEngine.Rendering.Universal
     /// <summary>
     /// Enumeration that indicates what kind of upscaling filter is being used
     /// </summary>
-    internal enum ImageUpscalingFilter
-    {
+    internal enum ImageUpscalingFilter {
         /// Bilinear filtering
         Linear,
 
@@ -67,8 +60,7 @@ namespace UnityEngine.Rendering.Universal
     /// URP builds the <c>RenderingData</c> settings from several places, including the pipeline asset, camera and light settings.
     /// The settings also might vary on different platforms and depending on if Adaptive Performance is used.
     /// </summary>
-    public struct RenderingData
-    {
+    public struct RenderingData {
         internal CommandBuffer commandBuffer;
 
         /// <summary>
@@ -124,8 +116,7 @@ namespace UnityEngine.Rendering.Universal
     /// <summary>
     /// Struct that holds settings related to lights.
     /// </summary>
-    public struct LightData
-    {
+    public struct LightData {
         /// <summary>
         /// Holds the main light index from the <c>VisibleLight</c> list returned by culling. If there's no main light in the scene, <c>mainLightIndex</c> is set to -1.
         /// The main light is the directional light assigned as Sun source in light settings or the brightest directional light.
@@ -171,30 +162,24 @@ namespace UnityEngine.Rendering.Universal
     /// <summary>
     /// Struct that holds settings related to camera.
     /// </summary>
-    public struct CameraData
-    {
+    public struct CameraData {
         // Internal camera data as we are not yet sure how to expose View in stereo context.
         // We might change this API soon.
         Matrix4x4 m_ViewMatrix;
         Matrix4x4 m_ProjectionMatrix;
 
-        internal void SetViewAndProjectionMatrix(Matrix4x4 viewMatrix, Matrix4x4 projectionMatrix)
-        {
+        internal void SetViewAndProjectionMatrix(Matrix4x4 viewMatrix, Matrix4x4 projectionMatrix) {
             m_ViewMatrix = viewMatrix;
             m_ProjectionMatrix = projectionMatrix;
         }
 
         // Helper function to populate builtin stereo matricies as well as URP stereo matricies
-        internal void PushBuiltinShaderConstantsXR(CommandBuffer cmd, bool renderIntoTexture)
-        {
+        internal void PushBuiltinShaderConstantsXR(CommandBuffer cmd, bool renderIntoTexture) {
 #if ENABLE_VR && ENABLE_XR_MODULE
-            if (xr.enabled)
-            {
+            if (xr.enabled) {
                 cmd.SetViewProjectionMatrices(GetViewMatrix(), GetProjectionMatrix());
-                if (xr.singlePassEnabled)
-                {
-                    for (int viewId = 0; viewId < xr.viewCount; viewId++)
-                    {
+                if (xr.singlePassEnabled) {
+                    for (int viewId = 0; viewId < xr.viewCount; viewId++) {
                         XRBuiltinShaderConstants.UpdateBuiltinShaderConstants(GetViewMatrix(viewId), GetProjectionMatrix(viewId), renderIntoTexture, viewId);
                     }
                     XRBuiltinShaderConstants.SetBuiltinShaderConstants(cmd);
@@ -208,8 +193,7 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="viewIndex"> View index in case of stereo rendering. By default <c>viewIndex</c> is set to 0. </param>
         /// <returns> The camera view matrix. </returns>
-        public Matrix4x4 GetViewMatrix(int viewIndex = 0)
-        {
+        public Matrix4x4 GetViewMatrix(int viewIndex = 0) {
 #if ENABLE_VR && ENABLE_XR_MODULE
             if (xr.enabled)
                 return xr.GetViewMatrix(viewIndex);
@@ -222,8 +206,7 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="viewIndex"> View index in case of stereo rendering. By default <c>viewIndex</c> is set to 0. </param>
         /// <returns> The camera projection matrix. </returns>
-        public Matrix4x4 GetProjectionMatrix(int viewIndex = 0)
-        {
+        public Matrix4x4 GetProjectionMatrix(int viewIndex = 0) {
 #if ENABLE_VR && ENABLE_XR_MODULE
             if (xr.enabled)
                 return xr.GetProjMatrix(viewIndex);
@@ -239,13 +222,11 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="viewIndex"> View index in case of stereo rendering. By default <c>viewIndex</c> is set to 0. </param>
         /// <seealso cref="GL.GetGPUProjectionMatrix(Matrix4x4, bool)"/>
         /// <returns></returns>
-        public Matrix4x4 GetGPUProjectionMatrix(int viewIndex = 0)
-        {
+        public Matrix4x4 GetGPUProjectionMatrix(int viewIndex = 0) {
             return GL.GetGPUProjectionMatrix(GetProjectionMatrix(viewIndex), IsCameraProjectionMatrixFlipped());
         }
 
-        internal Matrix4x4 GetGPUProjectionMatrix(bool renderIntoTexture, int viewIndex = 0)
-        {
+        internal Matrix4x4 GetGPUProjectionMatrix(bool renderIntoTexture, int viewIndex = 0) {
             return GL.GetGPUProjectionMatrix(GetProjectionMatrix(viewIndex), renderIntoTexture);
         }
 
@@ -325,10 +306,8 @@ namespace UnityEngine.Rendering.Universal
         public bool postProcessingRequiresDepthTexture;
 
         public bool xrRendering;
-        internal bool requireSrgbConversion
-        {
-            get
-            {
+        internal bool requireSrgbConversion {
+            get {
 #if ENABLE_VR && ENABLE_XR_MODULE
                 if (xr.enabled)
                     return !xr.renderTargetDesc.sRGB && (QualitySettings.activeColorSpace == ColorSpace.Linear);
@@ -357,14 +336,12 @@ namespace UnityEngine.Rendering.Universal
         /// matrix when rendering with for cmd.Draw* and reading from camera textures.
         /// <returns> True if the camera device projection matrix is flipped. </returns>
         /// </summary>
-        public bool IsCameraProjectionMatrixFlipped()
-        {
+        public bool IsCameraProjectionMatrixFlipped() {
             // Users only have access to CameraData on URP rendering scope. The current renderer should never be null.
             var renderer = ScriptableRenderer.current;
             Debug.Assert(renderer != null, "IsCameraProjectionMatrixFlipped is being called outside camera rendering scope.");
 
-            if (renderer != null)
-            {
+            if (renderer != null) {
 #pragma warning disable 0618 // Obsolete usage: Backwards compatibility for custom pipelines that aren't using RTHandles
                 var targetId = renderer.cameraColorTargetHandle?.nameID ?? renderer.cameraColorTarget;
 #pragma warning restore 0618
@@ -380,8 +357,7 @@ namespace UnityEngine.Rendering.Universal
             return true;
         }
 
-        public bool IsRenderTargetProjectionMatrixFlipped(RTHandle color, RTHandle depth = null)
-        {
+        public bool IsRenderTargetProjectionMatrixFlipped(RTHandle color, RTHandle depth = null) {
 
 #pragma warning disable 0618 // Obsolete usage: Backwards compatibility for custom pipelines that aren't using RTHandles
             var targetId = color?.nameID ?? depth?.nameID;
@@ -490,8 +466,7 @@ namespace UnityEngine.Rendering.Universal
         public Camera baseCamera;
     }
 
-    public struct ShadowData
-    {
+    public struct ShadowData {
         public bool supportsMainLightShadows;
         [Obsolete("Obsolete, this feature was replaced by new 'ScreenSpaceShadows' renderer feature")]
         public bool requiresScreenSpaceShadowResolve;
@@ -518,8 +493,7 @@ namespace UnityEngine.Rendering.Universal
     }
 
     // Precomputed tile data.
-    public struct PreTile
-    {
+    public struct PreTile {
         // Tile left, right, bottom and top plane equations in view space.
         // Normals are pointing out.
         public Unity.Mathematics.float4 planeLeft;
@@ -529,8 +503,7 @@ namespace UnityEngine.Rendering.Universal
     }
 
     // Actual tile data passed to the deferred shaders.
-    public struct TileData
-    {
+    public struct TileData {
         public uint tileID;         // 2x 16 bits
         public uint listBitMask;    // 32 bits
         public uint relLightOffset; // 16 bits is enough
@@ -538,8 +511,7 @@ namespace UnityEngine.Rendering.Universal
     }
 
     // Actual point/spot light data passed to the deferred shaders.
-    public struct PunctualLightData
-    {
+    public struct PunctualLightData {
         public Vector3 wsPos;
         public float radius; // TODO remove? included in attenuation
         public Vector4 color;
@@ -550,8 +522,7 @@ namespace UnityEngine.Rendering.Universal
         public uint layerMask;
     }
 
-    internal static class ShaderPropertyId
-    {
+    internal static class ShaderPropertyId {
         public static readonly int glossyEnvironmentColor = Shader.PropertyToID("_GlossyEnvironmentColor");
         public static readonly int subtractiveShadowColor = Shader.PropertyToID("_SubtractiveShadowColor");
 
@@ -619,8 +590,7 @@ namespace UnityEngine.Rendering.Universal
     /// <summary>
     /// Settings used for Post Processing.
     /// </summary>
-    public struct PostProcessingData
-    {
+    public struct PostProcessingData {
         /// <summary>
         /// The <c>ColorGradingMode</c> to use.
         /// </summary>
@@ -638,8 +608,7 @@ namespace UnityEngine.Rendering.Universal
         public bool useFastSRGBLinearConversion;
     }
 
-    public static class ShaderKeywordStrings
-    {
+    public static class ShaderKeywordStrings {
         public const string MainLightShadows = "_MAIN_LIGHT_SHADOWS";
         public const string MainLightShadowCascades = "_MAIN_LIGHT_SHADOWS_CASCADE";
         public const string MainLightShadowScreen = "_MAIN_LIGHT_SHADOWS_SCREEN";
@@ -740,8 +709,7 @@ namespace UnityEngine.Rendering.Universal
         public const string FoveatedRenderingNonUniformRaster = "_FOVEATED_RENDERING_NON_UNIFORM_RASTER";
     }
 
-    public sealed partial class UniversalRenderPipeline
-    {
+    public sealed partial class UniversalRenderPipeline {
         // Holds light direction for directional lights or position for punctual lights.
         // When w is set to 1.0, it means it's a punctual light.
         static Vector4 k_DefaultLightPosition = new Vector4(0.0f, 0.0f, 1.0f, 0.0f);
@@ -761,8 +729,7 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="camera">Camera to check state from.</param>
         /// <returns>true if given camera is a game camera, false otherwise.</returns>
-        public static bool IsGameCamera(Camera camera)
-        {
+        public static bool IsGameCamera(Camera camera) {
             if (camera == null)
                 throw new ArgumentNullException("camera");
 
@@ -775,8 +742,7 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="camera">Camera to check state from.</param>
         /// <returns>Returns true if the given camera is rendering in stereo mode, false otherwise.</returns>
         [Obsolete("Please use CameraData.xr.enabled instead.", true)]
-        public static bool IsStereoEnabled(Camera camera)
-        {
+        public static bool IsStereoEnabled(Camera camera) {
             if (camera == null)
                 throw new ArgumentNullException("camera");
 
@@ -787,15 +753,13 @@ namespace UnityEngine.Rendering.Universal
         /// Returns the current render pipeline asset for the current quality setting.
         /// If no render pipeline asset is assigned in QualitySettings, then returns the one assigned in GraphicsSettings.
         /// </summary>
-        public static UniversalRenderPipelineAsset asset
-        {
+        public static UniversalRenderPipelineAsset asset {
             get => GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
         }
 
         Comparison<Camera> cameraComparison = (camera1, camera2) => { return (int)camera1.depth - (int)camera2.depth; };
 #if UNITY_2021_1_OR_NEWER
-        void SortCameras(List<Camera> cameras)
-        {
+        void SortCameras(List<Camera> cameras) {
             if (cameras.Count > 1)
                 cameras.Sort(cameraComparison);
         }
@@ -809,10 +773,8 @@ namespace UnityEngine.Rendering.Universal
 
 #endif
 
-        internal static GraphicsFormat MakeRenderTextureGraphicsFormat(bool isHdrEnabled, HDRColorBufferPrecision requestHDRColorBufferPrecision, bool needsAlpha)
-        {
-            if (isHdrEnabled)
-            {
+        internal static GraphicsFormat MakeRenderTextureGraphicsFormat(bool isHdrEnabled, HDRColorBufferPrecision requestHDRColorBufferPrecision, bool needsAlpha) {
+            if (isHdrEnabled) {
                 // TODO: we need a proper format scoring system. Score formats, sort, pick first or pick first supported (if not in score).
                 if (!needsAlpha && requestHDRColorBufferPrecision != HDRColorBufferPrecision._64Bits && RenderingUtils.SupportsGraphicsFormat(GraphicsFormat.B10G11R11_UFloatPack32, FormatUsage.Linear | FormatUsage.Render))
                     return GraphicsFormat.B10G11R11_UFloatPack32;
@@ -827,8 +789,7 @@ namespace UnityEngine.Rendering.Universal
         // Returns a UNORM based render texture format
         // When supported by the device, this function will prefer formats with higher precision, but the same bit-depth
         // NOTE: This function does not guarantee that the returned format will contain an alpha channel.
-        internal static GraphicsFormat MakeUnormRenderTextureGraphicsFormat()
-        {
+        internal static GraphicsFormat MakeUnormRenderTextureGraphicsFormat() {
             if (RenderingUtils.SupportsGraphicsFormat(GraphicsFormat.A2B10G10R10_UNormPack32, FormatUsage.Linear | FormatUsage.Render))
                 return GraphicsFormat.A2B10G10R10_UNormPack32;
             else
@@ -836,15 +797,13 @@ namespace UnityEngine.Rendering.Universal
         }
 
         static RenderTextureDescriptor CreateRenderTextureDescriptor(Camera camera, float renderScale,
-            bool isHdrEnabled, HDRColorBufferPrecision requestHDRColorBufferPrecision, int msaaSamples, bool needsAlpha, bool requiresOpaqueTexture)
-        {
+            bool isHdrEnabled, HDRColorBufferPrecision requestHDRColorBufferPrecision, int msaaSamples, bool needsAlpha, bool requiresOpaqueTexture) {
             int scaledWidth = (int)((float)camera.pixelWidth * renderScale);
             int scaledHeight = (int)((float)camera.pixelHeight * renderScale);
 
             RenderTextureDescriptor desc;
 
-            if (camera.targetTexture == null)
-            {
+            if (camera.targetTexture == null) {
                 desc = new RenderTextureDescriptor(camera.pixelWidth, camera.pixelHeight);
                 desc.width = scaledWidth;
                 desc.height = scaledHeight;
@@ -852,15 +811,12 @@ namespace UnityEngine.Rendering.Universal
                 desc.depthBufferBits = 32;
                 desc.msaaSamples = msaaSamples;
                 desc.sRGB = (QualitySettings.activeColorSpace == ColorSpace.Linear);
-            }
-            else
-            {
+            } else {
                 desc = camera.targetTexture.descriptor;
                 desc.width = scaledWidth;
                 desc.height = scaledHeight;
 
-                if (camera.cameraType == CameraType.SceneView && !isHdrEnabled)
-                {
+                if (camera.cameraType == CameraType.SceneView && !isHdrEnabled) {
                     desc.graphicsFormat = SystemInfo.GetGraphicsFormat(DefaultFormat.LDR);
                 }
                 // SystemInfo.SupportsRenderTextureFormat(camera.targetTexture.descriptor.colorFormat)
@@ -883,8 +839,7 @@ namespace UnityEngine.Rendering.Universal
             // 2x MSAA.
             // The following code makes sure that on Vulkan the MSAA unsupported fallback behaviour is consistent between RenderTextures and Swapchain.
             // TODO: we should review how all backends handle MSAA fallbacks and move these implementation details in engine code.
-            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Vulkan)
-            {
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Vulkan) {
                 // if the requested number of samples is 2, and the supported value is 1x, it means that 2x is unsupported on this GPU.
                 // Then we bump up the requested value to 4.
                 if (desc.msaaSamples == 2 && SystemInfo.GetRenderTextureSupportedMSAASampleCount(desc) == 1)
@@ -904,31 +859,26 @@ namespace UnityEngine.Rendering.Universal
             return desc;
         }
 
-        private static Lightmapping.RequestLightsDelegate lightsDelegate = (Light[] requests, NativeArray<LightDataGI> lightsOutput) =>
-        {
+        private static Lightmapping.RequestLightsDelegate lightsDelegate = (Light[] requests, NativeArray<LightDataGI> lightsOutput) => {
             LightDataGI lightData = new LightDataGI();
 #if UNITY_EDITOR
             // Always extract lights in the Editor.
-            for (int i = 0; i < requests.Length; i++)
-            {
+            for (int i = 0; i < requests.Length; i++) {
                 Light light = requests[i];
                 var additionalLightData = light.GetUniversalAdditionalLightData();
 
                 LightmapperUtils.Extract(light, out Cookie cookie);
 
-                switch (light.type)
-                {
+                switch (light.type) {
                     case LightType.Directional:
                         DirectionalLight directionalLight = new DirectionalLight();
                         LightmapperUtils.Extract(light, ref directionalLight);
 
-                        if (light.cookie != null)
-                        {
+                        if (light.cookie != null) {
                             // Size == 1 / Scale
                             cookie.sizes = additionalLightData.lightCookieSize;
                             // Offset, Map cookie UV offset to light position on along local axes.
-                            if (additionalLightData.lightCookieOffset != Vector2.zero)
-                            {
+                            if (additionalLightData.lightCookieOffset != Vector2.zero) {
                                 var r = light.transform.right * additionalLightData.lightCookieOffset.x;
                                 var u = light.transform.up * additionalLightData.lightCookieOffset.y;
                                 var offset = r + u;
@@ -1028,26 +978,22 @@ namespace UnityEngine.Rendering.Universal
         public static void GetLightAttenuationAndSpotDirection(
             LightType lightType, float lightRange, Matrix4x4 lightLocalToWorldMatrix,
             float spotAngle, float? innerSpotAngle,
-            out Vector4 lightAttenuation, out Vector4 lightSpotDir)
-        {
+            out Vector4 lightAttenuation, out Vector4 lightSpotDir) {
             // Default is directional
             lightAttenuation = k_DefaultLightAttenuation;
             lightSpotDir = k_DefaultLightSpotDirection;
 
-            if (lightType != LightType.Directional)
-            {
+            if (lightType != LightType.Directional) {
                 GetPunctualLightDistanceAttenuation(lightRange, ref lightAttenuation);
 
-                if (lightType == LightType.Spot)
-                {
+                if (lightType == LightType.Spot) {
                     GetSpotDirection(ref lightLocalToWorldMatrix, out lightSpotDir);
                     GetSpotAngleAttenuation(spotAngle, innerSpotAngle, ref lightAttenuation);
                 }
             }
         }
 
-        internal static void GetPunctualLightDistanceAttenuation(float lightRange, ref Vector4 lightAttenuation)
-        {
+        internal static void GetPunctualLightDistanceAttenuation(float lightRange, ref Vector4 lightAttenuation) {
             // Light attenuation in universal matches the unity vanilla one (HINT_NICE_QUALITY).
             // attenuation = 1.0 / distanceToLightSqr
             // The smoothing factor makes sure that the light intensity is zero at the light range limit.
@@ -1068,8 +1014,7 @@ namespace UnityEngine.Rendering.Universal
 
         internal static void GetSpotAngleAttenuation(
             float spotAngle, float? innerSpotAngle,
-            ref Vector4 lightAttenuation)
-        {
+            ref Vector4 lightAttenuation) {
             // Spot Attenuation with a linear falloff can be defined as
             // (SdotL - cosOuterAngle) / (cosInnerAngle - cosOuterAngle)
             // This can be rewritten as
@@ -1093,14 +1038,12 @@ namespace UnityEngine.Rendering.Universal
             lightAttenuation.w = add;
         }
 
-        internal static void GetSpotDirection(ref Matrix4x4 lightLocalToWorldMatrix, out Vector4 lightSpotDir)
-        {
+        internal static void GetSpotDirection(ref Matrix4x4 lightLocalToWorldMatrix, out Vector4 lightSpotDir) {
             Vector4 dir = lightLocalToWorldMatrix.GetColumn(2);
             lightSpotDir = new Vector4(-dir.x, -dir.y, -dir.z, 0.0f);
         }
 
-        public static void InitializeLightConstants_Common(NativeArray<VisibleLight> lights, int lightIndex, out Vector4 lightPos, out Vector4 lightColor, out Vector4 lightAttenuation, out Vector4 lightSpotDir, out Vector4 lightOcclusionProbeChannel)
-        {
+        public static void InitializeLightConstants_Common(NativeArray<VisibleLight> lights, int lightIndex, out Vector4 lightPos, out Vector4 lightColor, out Vector4 lightAttenuation, out Vector4 lightSpotDir, out Vector4 lightOcclusionProbeChannel) {
             lightPos = k_DefaultLightPosition;
             lightColor = k_DefaultLightColor;
             lightOcclusionProbeChannel = k_DefaultLightsProbeChannel;
@@ -1118,20 +1061,16 @@ namespace UnityEngine.Rendering.Universal
             var lightLocalToWorld = lightData.localToWorldMatrix;
             var lightType = lightData.lightType;
 
-            if (lightType == LightType.Directional)
-            {
+            if (lightType == LightType.Directional) {
                 Vector4 dir = -lightLocalToWorld.GetColumn(2);
                 lightPos = new Vector4(dir.x, dir.y, dir.z, 0.0f);
-            }
-            else
-            {
+            } else {
                 Vector4 pos = lightLocalToWorld.GetColumn(3);
                 lightPos = new Vector4(pos.x, pos.y, pos.z, 1.0f);
 
                 GetPunctualLightDistanceAttenuation(lightData.range, ref lightAttenuation);
 
-                if (lightType == LightType.Spot)
-                {
+                if (lightType == LightType.Spot) {
                     GetSpotAngleAttenuation(lightData.spotAngle, light?.innerSpotAngle, ref lightAttenuation);
                     GetSpotDirection(ref lightLocalToWorld, out lightSpotDir);
                 }
@@ -1142,15 +1081,13 @@ namespace UnityEngine.Rendering.Universal
 
             if (light != null && light.bakingOutput.lightmapBakeType == LightmapBakeType.Mixed &&
                 0 <= light.bakingOutput.occlusionMaskChannel &&
-                light.bakingOutput.occlusionMaskChannel < 4)
-            {
+                light.bakingOutput.occlusionMaskChannel < 4) {
                 lightOcclusionProbeChannel[light.bakingOutput.occlusionMaskChannel] = 1.0f;
             }
         }
     }
 
-    internal enum URPProfileId
-    {
+    internal enum URPProfileId {
         // CPU
         UniversalRenderTotal,
         UpdateVolumeFramework,
