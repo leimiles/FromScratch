@@ -14,6 +14,8 @@ namespace UnityEngine.Miles.Rendering {
         _2DRenderer
 
     }
+
+    // 渲染管线配置类，用于定义开启渲染管线的渲染流程，返回渲染管线实例，开启内置功能
     public partial class MilesRenderPipelineAsset : RenderPipelineAsset, ISerializationCallbackReceiver {
         public void OnAfterDeserialize() {
         }
@@ -21,7 +23,7 @@ namespace UnityEngine.Miles.Rendering {
         public void OnBeforeSerialize() {
         }
 
-        // 返回渲染管线的实例
+        // 返回渲染管线的实例，渲染管线会按照该实例的 Render() 函数安排渲染流程
         protected override RenderPipeline CreatePipeline() {
             var pipeline = new MilesRenderPipeline();
             return pipeline;
@@ -63,7 +65,7 @@ namespace UnityEngine.Miles.Rendering {
             return milesRendererData;
         }
 
-        // 根据不同的渲染类型创建不同的 renderer
+        // 根据不同的渲染类型创建不同的 renderer 实例并返回
         static MilesRendererData CreateRendererData(RendererType type) {
             switch (type) {
                 case RendererType.MilesRenderer:

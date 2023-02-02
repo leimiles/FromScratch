@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityEngine.Miles.Rendering {
-    public class MilesRendererData : ScriptableObject {
+    public class MilesRendererData : ScriptableRendererData, ISerializationCallbackReceiver {
+        public void OnAfterDeserialize() {
+        }
 
+        public void OnBeforeSerialize() {
+        }
     }
 }
