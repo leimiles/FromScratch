@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityEngine.Miles.Rendering {
-    // 定义摄影机的渲染类型 base 或者 overlay
+    /// <summary>
+    /// 定义摄影机的渲染类型 base 或者 overlay
+    /// </summary>
     public enum CameraRenderType {
         Base,
         Overlay
     }
 
-    // 一个挂给摄影机的 mono 为摄影机提供额外的属性与功能，是渲染管线对摄影机功能的扩展
+    /// <summary>
+    /// 一个挂给摄影机的 mono 为摄影机提供额外的属性与功能，是渲染管线对摄影机功能的扩展
+    /// </summary>
     [RequireComponent(typeof(Camera))]
     public class MilesAdditionalCameraData : MonoBehaviour, ISerializationCallbackReceiver {
         [SerializeField] int m_RendererIndex = -1;

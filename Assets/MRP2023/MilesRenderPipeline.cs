@@ -44,9 +44,8 @@ namespace UnityEngine.Miles.Rendering {
             if (baseCameraAdditionalData != null && baseCameraAdditionalData.cameraRenderType == CameraRenderType.Overlay) {
                 return;
             }
-
             int lastActiveOverlayCameraIndex = -1;
-            // 判断是否是 stack rendering, 只有但摄影机的情况不属于 stack rendering
+            // 判断是否是 stack rendering, 只有单摄影机的情况不属于 stack rendering
             bool isStackedRendering = lastActiveOverlayCameraIndex != -1;
             // 初始化 cameraData
             InitializeCameraData(baseCamera, baseCameraAdditionalData, !isStackedRendering, out var baseCameraData);
@@ -72,7 +71,12 @@ namespace UnityEngine.Miles.Rendering {
         /// </summary>
         static void InitializeCameraData(Camera camera, MilesAdditionalCameraData additionalCameraData, bool resolveFinalTarget, out CameraData cameraData) {
             cameraData = new CameraData();
+            InitializeCameraDataViaAdditionalCameraData(camera, additionalCameraData, resolveFinalTarget, ref cameraData);
+
         }
 
+        static void InitializeCameraDataViaAdditionalCameraData(Camera camera, MilesAdditionalCameraData milesAdditionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
+            cameraData.scriptableRenderer = currentPipelineAsset.scriptableRenderer;
+        }
     }
 }

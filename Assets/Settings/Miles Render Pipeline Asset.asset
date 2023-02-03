@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 240ffad3608c7ea4391567eb36e4feb6, type: 3}
   m_Name: Miles Render Pipeline Asset
   m_EditorClassIdentifier: 
+  m_RendererDataList:
+  - {fileID: 11400000, guid: fc6755e20bd67d440b4109271f1b4c09, type: 2}
+  m_DefaultRendererIndex: 0

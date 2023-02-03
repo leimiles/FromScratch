@@ -515,6 +515,7 @@ namespace UnityEngine.Rendering.Universal {
                     ScriptableRenderContext.EmitGeometryForCamera(camera);
 
                 var cullResults = context.Cull(ref cullingParameters);
+                // miles, 初始化 renderingData
                 InitializeRenderingData(asset, ref cameraData, ref cullResults, anyPostProcessingEnabled, cmd, out var renderingData);
 #if ADAPTIVE_PERFORMANCE_2_0_0_OR_NEWER
                 if (asset.useAdaptivePerformance)
@@ -652,6 +653,7 @@ namespace UnityEngine.Rendering.Universal {
                 }
                 // Update volumeframework before initializing additional camera data
                 UpdateVolumeFramework(baseCamera, baseCameraAdditionalData);
+                // miles, 初始化 cameraData
                 InitializeCameraData(baseCamera, baseCameraAdditionalData, !isStackedRendering, out var baseCameraData);
                 RenderTextureDescriptor originalTargetDesc = baseCameraData.cameraTargetDescriptor;
 
@@ -679,8 +681,7 @@ namespace UnityEngine.Rendering.Universal {
 #endif
                 // update the base camera flag so that the scene depth is stored if needed by overlay cameras later in the frame
                 baseCameraData.postProcessingRequiresDepthTexture |= cameraStackRequiresDepthForPostprocessing;
-
-                // miles, begin camera rendering
+                // miles, 渲染独立摄影机
                 RenderSingleCamera(context, ref baseCameraData, anyPostProcessingEnabled);
                 using (new ProfilingScope(null, Profiling.Pipeline.endCameraRendering)) {
                     EndCameraRendering(context, baseCamera);
@@ -859,6 +860,7 @@ namespace UnityEngine.Rendering.Universal {
 
             cameraData = new CameraData();
             InitializeStackedCameraData(camera, additionalCameraData, ref cameraData);
+            // miles, 通过 additional camera data 初始化 cameraData
             InitializeAdditionalCameraData(camera, additionalCameraData, resolveFinalTarget, ref cameraData);
 
             ///////////////////////////////////////////////////////////////////

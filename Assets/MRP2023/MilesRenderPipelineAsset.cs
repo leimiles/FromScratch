@@ -22,13 +22,34 @@ namespace UnityEngine.Miles.Rendering {
     // 渲染管线配置类，用于定义开启渲染管线的渲染流程，返回渲染管线实例，开启内置功能
     public partial class MilesRenderPipelineAsset : RenderPipelineAsset, ISerializationCallbackReceiver {
 
+        [SerializeField] internal ScriptableRendererData[] m_RendererDataList = new ScriptableRendererData[1];
+
+
+        /// <summary>
+        /// asset 当前包含的 renderer
+        /// </summary>
         ScriptableRenderer[] m_Renderers = new ScriptableRenderer[1];
+
+        /// <summary>
+        /// 默认的 renderer 索引位置, 默认值为 0
+        /// </summary>
+        [SerializeField] internal int m_DefaultRendererIndex = 0;
+
+        /// <summary>
+        /// 当前渲染管线 asset 文件正在引用的 renderer
+        /// </summary>
+        public ScriptableRenderer scriptableRenderer {
+            get {
+                return m_Renderers[m_DefaultRendererIndex];
+            }
+        }
 
         /// <summary>
         /// 返回渲染管线的实例，渲染管线会按照该实例的 Render() 函数安排渲染流程
         /// </summary>
         protected override RenderPipeline CreatePipeline() {
             var pipeline = new MilesRenderPipeline(this);
+            CreateRenderers();
             return pipeline;
         }
 
@@ -53,11 +74,30 @@ namespace UnityEngine.Miles.Rendering {
         }
 
         /// <summary>
-        /// 创建渲染管线 asset 实例并返回
+        /// 创建渲染管线 asset 实例并返回，默认情况下，还会同时创建 renderer 的 asset 文件，配置给渲染管线后，返回其实例
         /// </summary>
-        public static MilesRenderPipelineAsset Create(MilesRendererData rendererData = null) {
+        public static MilesRenderPipelineAsset Create(ScriptableRendererData rendererData = null) {
             var instance = CreateInstance<MilesRenderPipelineAsset>();
+            if (rendererData != null) {
+                instance.m_RendererDataList[0] = rendererData;
+            } else {
+                instance.m_RendererDataList[0] = CreateInstance<MilesRendererData>();
+            }
             return instance;
+        }
+
+        /// <summary>
+        /// 创建渲染接口 renderer 实例
+        /// </summary>
+        void CreateRenderers() {
+            if (m_Renderers == null) {
+                m_Renderers = new ScriptableRenderer[1];
+            }
+            for (int i = 0; i < m_RendererDataList.Length; ++i) {
+                if (m_RendererDataList[i] != null) {
+                    m_Renderers[m_DefaultRendererIndex] = m_RendererDataList[i].InternalCreateRenderer();
+                }
+            }
         }
 
         /// <summary>
@@ -77,7 +117,7 @@ namespace UnityEngine.Miles.Rendering {
         }
 
         /// <summary>
-        /// 根据不同的渲染类型创建不同的 renderer 实例并返回
+        /// 根据不同的 renderer 类型实现，创建不同的 renderer 实例并返回
         /// </summary>
         static MilesRendererData CreateRendererData(RendererType type) {
             switch (type) {
@@ -97,7 +137,7 @@ namespace UnityEngine.Miles.Rendering {
         }
 
         /// <summary>
-        /// 返回指定渲染接口的实例
+        /// 返回指定渲染接口 renderer 的实例
         /// </summary>
         public ScriptableRenderer GetRenderer(int index) {
             return m_Renderers[index];
