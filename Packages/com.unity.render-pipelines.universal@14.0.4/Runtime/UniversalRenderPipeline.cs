@@ -169,7 +169,9 @@ namespace UnityEngine.Rendering.Universal {
             m_GlobalSettings = UniversalRenderPipelineGlobalSettings.instance;
 #endif
             SetSupportedRenderingFeatures();
+            
 
+            // miles, found rthandle system init
             // Initial state of the RTHandle system.
             // We initialize to screen width/height to avoid multiple realloc that can lead to inflated memory usage (as releasing of memory is delayed).
             RTHandles.Initialize(Screen.width, Screen.height);

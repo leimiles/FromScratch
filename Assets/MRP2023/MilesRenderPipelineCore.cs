@@ -6,6 +6,12 @@ using UnityEngine.Rendering;
 
 namespace UnityEngine.Miles.Rendering {
     /// <summary>
+    /// camera stack 用于渲染的设置数据集合，包括cullResualt, shadowData，lightData，shadowData，postData 等其他设置信息
+    /// </summary>
+    public struct RenderingData {
+    }
+
+    /// <summary>
     /// 用于保存当前摄影机的设置信息
     /// </summary>
     public struct CameraData {
@@ -31,6 +37,7 @@ namespace UnityEngine.Miles.Rendering {
         */
 
     }
+
     /// <summary>
     /// 用于支持渲染管线类的辅助功能，partial
     /// </summary>

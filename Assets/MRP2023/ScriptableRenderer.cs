@@ -10,5 +10,9 @@ namespace UnityEngine.Miles.Rendering {
     public partial class ScriptableRenderer : IDisposable {
         public void Dispose() {
         }
+
+        internal void AddRenderPasses(ref RenderingData renderingData) {
+
+        }
     }
 }

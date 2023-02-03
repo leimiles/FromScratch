@@ -13,6 +13,9 @@ namespace UnityEngine.Miles.Rendering {
         private readonly MilesRenderPipelineAsset milesRenderPipelineAsset;
         public MilesRenderPipeline(MilesRenderPipelineAsset milesRenderPipelineAsset) {
             this.milesRenderPipelineAsset = milesRenderPipelineAsset;
+
+            // init RTHandle System
+            RTHandles.Initialize(Screen.width, Screen.height);
         }
 
         /// <summary>
@@ -61,9 +64,11 @@ namespace UnityEngine.Miles.Rendering {
             var renderer = cameraData.scriptableRenderer;
             if (renderer == null) {
                 Debug.LogWarning("Can't find renderer for camera, quit rendering");
-            } else {
-                Debug.Log("found renderer");
+                return;
             }
+
+            //InitializeRenderingData(out var renderingData);
+            //renderer.AddRenderPasses(ref renderingData);
         }
 
         /// <summary>
@@ -72,9 +77,15 @@ namespace UnityEngine.Miles.Rendering {
         static void InitializeCameraData(Camera camera, MilesAdditionalCameraData additionalCameraData, bool resolveFinalTarget, out CameraData cameraData) {
             cameraData = new CameraData();
             InitializeCameraDataViaAdditionalCameraData(camera, additionalCameraData, resolveFinalTarget, ref cameraData);
+        }
+
+        static void InitializeRenderingData(ref CullingResults cullingResults, out RenderingData renderingData) {
 
         }
 
+        /// <summary>
+        /// 通过摄影机的 additional data 初始化 cameraData
+        /// </summary>
         static void InitializeCameraDataViaAdditionalCameraData(Camera camera, MilesAdditionalCameraData milesAdditionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
             cameraData.scriptableRenderer = currentPipelineAsset.scriptableRenderer;
         }
