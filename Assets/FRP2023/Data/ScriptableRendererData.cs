@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnityEngine.Miles.Rendering {
+namespace UnityEngine.Funny.Rendering {
     /// <summary>
     /// 用于保存 renderer 在执行时需要用到的资源
     /// </summary>

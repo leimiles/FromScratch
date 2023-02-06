@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace UnityEngine.Miles.Rendering {
+namespace UnityEngine.Funny.Rendering {
     // 渲染管线主逻辑 partial
-    public sealed partial class MilesRenderPipeline : RenderPipeline {
+    public sealed partial class FunnyRenderPipeline : RenderPipeline {
         /// <summary>
         /// 用于保存渲染管线 asset 配置文件当前的内容
         /// </summary>
-        private readonly MilesRenderPipelineAsset milesRenderPipelineAsset;
-        public MilesRenderPipeline(MilesRenderPipelineAsset milesRenderPipelineAsset) {
-            this.milesRenderPipelineAsset = milesRenderPipelineAsset;
+        private readonly FunnyRenderPipelineAsset FunnyRenderPipelineAsset;
+        public FunnyRenderPipeline(FunnyRenderPipelineAsset FunnyRenderPipelineAsset) {
+            this.FunnyRenderPipelineAsset = FunnyRenderPipelineAsset;
 
             // init RTHandle System
             RTHandles.Initialize(Screen.width, Screen.height);
@@ -43,7 +43,7 @@ namespace UnityEngine.Miles.Rendering {
         /// </summary>
         static void RenderCameraStack(ScriptableRenderContext renderContext, Camera baseCamera) {
             // 获取摄影机的 camerdaAddtional 数据，该类扩展了摄影机属性
-            baseCamera.TryGetComponent<MilesAdditionalCameraData>(out var baseCameraAdditionalData);
+            baseCamera.TryGetComponent<FunnyAdditionalCameraData>(out var baseCameraAdditionalData);
             if (baseCameraAdditionalData != null && baseCameraAdditionalData.cameraRenderType == CameraRenderType.Overlay) {
                 return;
             }
@@ -73,24 +73,39 @@ namespace UnityEngine.Miles.Rendering {
                 return;
             }
 
+            // 第一个 commandbuffer
             CommandBuffer cmd = CommandBufferPool.Get();
 
             var cullResults = renderContext.Cull(ref cullingParameters);
 
             // 需要初始化 rendering data 作为所有被渲染对象的渲染设置
-            InitializeRenderingData(MilesRenderPipeline.currentPipelineAsset, ref cameraData, ref cullResults, cmd, out var renderingData);
-            //renderer.AddRenderPasses(ref renderingData);
+            InitializeRenderingData(FunnyRenderPipeline.currentPipelineAsset, ref cameraData, ref cullResults, cmd, out var renderingData);
+
+            // pass 开始前，设置 RTHandle System 的最大引用尺寸
+            RTHandles.SetReferenceSize(cameraData.cameraRenderTextureDescriptor.width, cameraData.cameraRenderTextureDescriptor.height);
+
+            // 插入 render feature
+            renderer.AddRenderPasses(ref renderingData);
+
+            // 配置渲染场景的所有 passes
+            renderer.Setup(renderContext, ref renderingData);
+
+            // 执行所有 passes 的渲染命令
+            renderer.Execute(renderContext, ref renderingData);
+
+            renderContext.ExecuteCommandBuffer(cmd);
+            CommandBufferPool.Release(cmd);
         }
 
         /// <summary>
         /// 初始化摄影机数据 cameraData
         /// </summary>
-        static void InitializeCameraData(Camera camera, MilesAdditionalCameraData additionalCameraData, bool resolveFinalTarget, out CameraData cameraData) {
+        static void InitializeCameraData(Camera camera, FunnyAdditionalCameraData additionalCameraData, bool resolveFinalTarget, out CameraData cameraData) {
             cameraData = new CameraData();
             InitializeAdditionalCameraData(camera, additionalCameraData, resolveFinalTarget, ref cameraData);
         }
 
-        static void InitializeRenderingData(MilesRenderPipelineAsset asset, ref CameraData cameraData, ref CullingResults cullingResults, CommandBuffer cmd, out RenderingData renderingData) {
+        static void InitializeRenderingData(FunnyRenderPipelineAsset asset, ref CameraData cameraData, ref CullingResults cullingResults, CommandBuffer cmd, out RenderingData renderingData) {
             renderingData.cullingResults = cullingResults;
             renderingData.cameraData = cameraData;
             renderingData.commandBuffer = cmd;
@@ -99,7 +114,7 @@ namespace UnityEngine.Miles.Rendering {
         /// <summary>
         /// 通过摄影机的 additional data 初始化 cameraData
         /// </summary>
-        static void InitializeAdditionalCameraData(Camera camera, MilesAdditionalCameraData milesAdditionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
+        static void InitializeAdditionalCameraData(Camera camera, FunnyAdditionalCameraData FunnyAdditionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
             cameraData.camera = camera;
             cameraData.scriptableRenderer = currentPipelineAsset.scriptableRenderer;
         }

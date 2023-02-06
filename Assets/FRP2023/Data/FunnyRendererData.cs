@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnityEngine.Miles.Rendering {
+namespace UnityEngine.Funny.Rendering {
     /// <summary>
-    /// MRP 对 scriptable renderer 的特殊实现
+    /// 用于实现 funny renderer 的所有资源数据
     /// </summary>
-    public class MilesRendererData : ScriptableRendererData, ISerializationCallbackReceiver {
+    public class FunnyRendererData : ScriptableRendererData, ISerializationCallbackReceiver {
 
         /// <summary>
-        /// 实现 MilesRenderer 实例
+        /// 实现 FunnyRenderer 实例
         /// </summary>
         protected override ScriptableRenderer Create() {
-            return new MilesRenderer();
+            return new FunnyRenderer(this);
         }
 
         public void OnAfterDeserialize() {

@@ -169,9 +169,9 @@ namespace UnityEngine.Rendering.Universal {
             m_GlobalSettings = UniversalRenderPipelineGlobalSettings.instance;
 #endif
             SetSupportedRenderingFeatures();
-            
 
-            // miles, found rthandle system init
+
+            // Funny, found rthandle system init
             // Initial state of the RTHandle system.
             // We initialize to screen width/height to avoid multiple realloc that can lead to inflated memory usage (as releasing of memory is delayed).
             RTHandles.Initialize(Screen.width, Screen.height);
@@ -517,7 +517,7 @@ namespace UnityEngine.Rendering.Universal {
                     ScriptableRenderContext.EmitGeometryForCamera(camera);
 
                 var cullResults = context.Cull(ref cullingParameters);
-                // miles, 初始化 renderingData
+                // Funny, 初始化 renderingData
                 InitializeRenderingData(asset, ref cameraData, ref cullResults, anyPostProcessingEnabled, cmd, out var renderingData);
 #if ADAPTIVE_PERFORMANCE_2_0_0_OR_NEWER
                 if (asset.useAdaptivePerformance)
@@ -655,7 +655,7 @@ namespace UnityEngine.Rendering.Universal {
                 }
                 // Update volumeframework before initializing additional camera data
                 UpdateVolumeFramework(baseCamera, baseCameraAdditionalData);
-                // miles, 初始化 cameraData
+                // Funny, 初始化 cameraData
                 InitializeCameraData(baseCamera, baseCameraAdditionalData, !isStackedRendering, out var baseCameraData);
                 RenderTextureDescriptor originalTargetDesc = baseCameraData.cameraTargetDescriptor;
 
@@ -683,7 +683,7 @@ namespace UnityEngine.Rendering.Universal {
 #endif
                 // update the base camera flag so that the scene depth is stored if needed by overlay cameras later in the frame
                 baseCameraData.postProcessingRequiresDepthTexture |= cameraStackRequiresDepthForPostprocessing;
-                // miles, 渲染独立摄影机
+                // Funny, 渲染独立摄影机
                 RenderSingleCamera(context, ref baseCameraData, anyPostProcessingEnabled);
                 using (new ProfilingScope(null, Profiling.Pipeline.endCameraRendering)) {
                     EndCameraRendering(context, baseCamera);
@@ -862,7 +862,7 @@ namespace UnityEngine.Rendering.Universal {
 
             cameraData = new CameraData();
             InitializeStackedCameraData(camera, additionalCameraData, ref cameraData);
-            // miles, 通过 additional camera data 初始化 cameraData
+            // Funny, 通过 additional camera data 初始化 cameraData
             InitializeAdditionalCameraData(camera, additionalCameraData, resolveFinalTarget, ref cameraData);
 
             ///////////////////////////////////////////////////////////////////

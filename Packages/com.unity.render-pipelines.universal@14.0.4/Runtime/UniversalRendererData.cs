@@ -7,13 +7,11 @@ using System;
 using UnityEngine.Scripting.APIUpdating;
 using UnityEngine.Assertions;
 
-namespace UnityEngine.Rendering.Universal
-{
+namespace UnityEngine.Rendering.Universal {
     /// <summary>
     /// Defines if Unity will copy the depth that can be bound in shaders as _CameraDepthTexture after the opaques pass or after the transparents pass.
     /// </summary>
-    public enum CopyDepthMode
-    {
+    public enum CopyDepthMode {
         /// <summary>Depth will be copied after the opaques pass</summary>
         AfterOpaques,
         /// <summary>Depth will be copied after the transparents pass</summary>
@@ -27,22 +25,18 @@ namespace UnityEngine.Rendering.Universal
     /// </summary>
     [Serializable, ReloadGroup, ExcludeFromPreset]
     [URPHelpURL("urp-universal-renderer")]
-    public class UniversalRendererData : ScriptableRendererData, ISerializationCallbackReceiver
-    {
+    public class UniversalRendererData : ScriptableRendererData, ISerializationCallbackReceiver {
 #if UNITY_EDITOR
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812")]
-        internal class CreateUniversalRendererAsset : EndNameEditAction
-        {
-            public override void Action(int instanceId, string pathName, string resourceFile)
-            {
+        internal class CreateUniversalRendererAsset : EndNameEditAction {
+            public override void Action(int instanceId, string pathName, string resourceFile) {
                 var instance = UniversalRenderPipelineAsset.CreateRendererAsset(pathName, RendererType.UniversalRenderer, false) as UniversalRendererData;
                 Selection.activeObject = instance;
             }
         }
 
         [MenuItem("Assets/Create/Rendering/URP Universal Renderer", priority = CoreUtils.Sections.section3 + CoreUtils.Priorities.assetsCreateRenderingMenuPriority + 2)]
-        static void CreateUniversalRendererData()
-        {
+        static void CreateUniversalRendererData() {
             ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, CreateInstance<CreateUniversalRendererAsset>(), "New Custom Universal Renderer Data.asset", null, null);
         }
 
@@ -52,8 +46,7 @@ namespace UnityEngine.Rendering.Universal
         /// Class containing shader resources used in URP.
         /// </summary>
         [Serializable, ReloadGroup]
-        public sealed class ShaderResources
-        {
+        public sealed class ShaderResources {
             /// <summary>
             /// Blit shader.
             /// </summary>
@@ -158,10 +151,8 @@ namespace UnityEngine.Rendering.Universal
         [SerializeField] bool m_AccurateGbufferNormals = false;
         [SerializeField] IntermediateTextureMode m_IntermediateTextureMode = IntermediateTextureMode.Always;
 
-        protected override ScriptableRenderer Create()
-        {
-            if (!Application.isPlaying)
-            {
+        protected override ScriptableRenderer Create() {
+            if (!Application.isPlaying) {
                 ReloadAllNullProperties();
             }
             return new UniversalRenderer(this);
@@ -170,11 +161,9 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// Use this to configure how to filter opaque objects.
         /// </summary>
-        public LayerMask opaqueLayerMask
-        {
+        public LayerMask opaqueLayerMask {
             get => m_OpaqueLayerMask;
-            set
-            {
+            set {
                 SetDirty();
                 m_OpaqueLayerMask = value;
             }
@@ -183,21 +172,17 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// Use this to configure how to filter transparent objects.
         /// </summary>
-        public LayerMask transparentLayerMask
-        {
+        public LayerMask transparentLayerMask {
             get => m_TransparentLayerMask;
-            set
-            {
+            set {
                 SetDirty();
                 m_TransparentLayerMask = value;
             }
         }
 
-        public StencilStateData defaultStencilState
-        {
+        public StencilStateData defaultStencilState {
             get => m_DefaultStencilState;
-            set
-            {
+            set {
                 SetDirty();
                 m_DefaultStencilState = value;
             }
@@ -206,11 +191,9 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// True if transparent objects receive shadows.
         /// </summary>
-        public bool shadowTransparentReceive
-        {
+        public bool shadowTransparentReceive {
             get => m_ShadowTransparentReceive;
-            set
-            {
+            set {
                 SetDirty();
                 m_ShadowTransparentReceive = value;
             }
@@ -219,11 +202,9 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// Rendering mode.
         /// </summary>
-        public RenderingMode renderingMode
-        {
+        public RenderingMode renderingMode {
             get => m_RenderingMode;
-            set
-            {
+            set {
                 SetDirty();
                 m_RenderingMode = value;
             }
@@ -232,11 +213,9 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// Depth priming mode.
         /// </summary>
-        public DepthPrimingMode depthPrimingMode
-        {
+        public DepthPrimingMode depthPrimingMode {
             get => m_DepthPrimingMode;
-            set
-            {
+            set {
                 SetDirty();
                 m_DepthPrimingMode = value;
             }
@@ -245,11 +224,9 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// Copy depth mode.
         /// </summary>
-        public CopyDepthMode copyDepthMode
-        {
+        public CopyDepthMode copyDepthMode {
             get => m_CopyDepthMode;
-            set
-            {
+            set {
                 SetDirty();
                 m_CopyDepthMode = value;
             }
@@ -259,11 +236,9 @@ namespace UnityEngine.Rendering.Universal
         /// Use Octaedron Octahedron normal vector encoding for gbuffer normals.
         /// The overhead is negligible from desktop GPUs, while it should be avoided for mobile GPUs.
         /// </summary>
-        public bool accurateGbufferNormals
-        {
+        public bool accurateGbufferNormals {
             get => m_AccurateGbufferNormals;
-            set
-            {
+            set {
                 SetDirty();
                 m_AccurateGbufferNormals = value;
             }
@@ -272,18 +247,15 @@ namespace UnityEngine.Rendering.Universal
         /// <summary>
         /// Controls when URP renders via an intermediate texture.
         /// </summary>
-        public IntermediateTextureMode intermediateTextureMode
-        {
+        public IntermediateTextureMode intermediateTextureMode {
             get => m_IntermediateTextureMode;
-            set
-            {
+            set {
                 SetDirty();
                 m_IntermediateTextureMode = value;
             }
         }
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
 
             // Upon asset creation, OnEnable is called and `shaders` reference is not yet initialized
@@ -296,8 +268,7 @@ namespace UnityEngine.Rendering.Universal
             ReloadAllNullProperties();
         }
 
-        private void ReloadAllNullProperties()
-        {
+        private void ReloadAllNullProperties() {
 #if UNITY_EDITOR
             ResourceReloader.TryReloadAllNullIn(this, UniversalRenderPipelineAsset.packagePath);
 
@@ -310,15 +281,12 @@ namespace UnityEngine.Rendering.Universal
 #endif
         }
 
-        void ISerializationCallbackReceiver.OnBeforeSerialize()
-        {
+        void ISerializationCallbackReceiver.OnBeforeSerialize() {
             m_AssetVersion = k_LatestAssetVersion;
         }
 
-        void ISerializationCallbackReceiver.OnAfterDeserialize()
-        {
-            if (m_AssetVersion <= 1)
-            {
+        void ISerializationCallbackReceiver.OnAfterDeserialize() {
+            if (m_AssetVersion <= 1) {
                 // To avoid breaking existing projects, keep the old AfterOpaques behaviour. The new AfterTransparents default will only apply to new projects.
                 m_CopyDepthMode = CopyDepthMode.AfterOpaques;
             }

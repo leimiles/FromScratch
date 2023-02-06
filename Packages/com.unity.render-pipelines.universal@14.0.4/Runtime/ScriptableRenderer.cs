@@ -1170,7 +1170,7 @@ namespace UnityEngine.Rendering.Universal {
         internal void AddRenderPasses(ref RenderingData renderingData) {
             using var profScope = new ProfilingScope(null, Profiling.addRenderPasses);
 
-            // Add render passes from custom renderer features
+            // Funny, Add render passes from custom renderer features
             for (int i = 0; i < rendererFeatures.Count; ++i) {
                 if (!rendererFeatures[i].isActive) {
                     continue;

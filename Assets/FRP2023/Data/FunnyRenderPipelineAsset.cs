@@ -8,19 +8,19 @@ using UnityEditor;
 using UnityEditor.ProjectWindowCallback;
 #endif
 
-namespace UnityEngine.Miles.Rendering {
+namespace UnityEngine.Funny.Rendering {
     /// <summary>
     /// 渲染接口类型，即 ScriptableRenderer
     /// </summary>
     public enum RendererType {
         Custom,
-        MilesRenderer,
+        FunnyRenderer,
         _2DRenderer
 
     }
 
     // 渲染管线配置类，用于定义开启渲染管线的渲染流程，返回渲染管线实例，开启内置功能
-    public partial class MilesRenderPipelineAsset : RenderPipelineAsset, ISerializationCallbackReceiver {
+    public partial class FunnyRenderPipelineAsset : RenderPipelineAsset, ISerializationCallbackReceiver {
 
         [SerializeField] internal ScriptableRendererData[] m_RendererDataList = new ScriptableRendererData[1];
 
@@ -48,7 +48,7 @@ namespace UnityEngine.Miles.Rendering {
         /// 返回渲染管线的实例，渲染管线会按照该实例的 Render() 函数安排渲染流程
         /// </summary>
         protected override RenderPipeline CreatePipeline() {
-            var pipeline = new MilesRenderPipeline(this);
+            var pipeline = new FunnyRenderPipeline(this);
             CreateRenderers();
             return pipeline;
         }
@@ -56,32 +56,32 @@ namespace UnityEngine.Miles.Rendering {
         /// <summary>
         /// 添加创建 asset 命令到菜单
         /// </summary>
-        [MenuItem("Assets/Create/Miles/Rendering/MRP Asset", priority = CoreUtils.Sections.section1 + CoreUtils.Priorities.assetsCreateRenderingMenuPriority + 0)]
-        static void CreateMilesPipeline() {
+        [MenuItem("Assets/Create/Funny/Rendering/FRP Asset", priority = CoreUtils.Sections.section1 + CoreUtils.Priorities.assetsCreateRenderingMenuPriority + 0)]
+        static void CreateFunnyPipeline() {
             // 以指定名称创建 asset 后，允许重命名
-            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, CreateInstance<CreateMilesPipelineAsset>(), "Miles Render Pipeline Asset.asset", null, null);
+            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, CreateInstance<CreateFunnyPipelineAsset>(), "Funny Render Pipeline Asset.asset", null, null);
         }
 
         /// <summary>
         // 创建渲染管线 asset 文件，并允许重命名
         /// </summary>
-        internal class CreateMilesPipelineAsset : EndNameEditAction {
+        internal class CreateFunnyPipelineAsset : EndNameEditAction {
             // pathName 会传递当前 ScriptableObject 的路径，基于该路径设置 renderer asset 的位置
             public override void Action(int instanceId, string pathName, string resourceFile) {
                 // 创建渲染管线 asset 文件，同时创建对应的 renderer asset 文件
-                AssetDatabase.CreateAsset(Create(CreateRendererAsset(pathName, RendererType.MilesRenderer)), pathName);
+                AssetDatabase.CreateAsset(Create(CreateRendererAsset(pathName, RendererType.FunnyRenderer)), pathName);
             }
         }
 
         /// <summary>
         /// 创建渲染管线 asset 实例并返回，默认情况下，还会同时创建 renderer 的 asset 文件，配置给渲染管线后，返回其实例
         /// </summary>
-        public static MilesRenderPipelineAsset Create(ScriptableRendererData rendererData = null) {
-            var instance = CreateInstance<MilesRenderPipelineAsset>();
+        public static FunnyRenderPipelineAsset Create(ScriptableRendererData rendererData = null) {
+            var instance = CreateInstance<FunnyRenderPipelineAsset>();
             if (rendererData != null) {
                 instance.m_RendererDataList[0] = rendererData;
             } else {
-                instance.m_RendererDataList[0] = CreateInstance<MilesRendererData>();
+                instance.m_RendererDataList[0] = CreateInstance<FunnyRendererData>();
             }
             return instance;
         }
@@ -103,8 +103,8 @@ namespace UnityEngine.Miles.Rendering {
         /// <summary>
         /// 创建对应的 renderer asset 文件
         /// </summary>
-        internal static MilesRendererData CreateRendererAsset(string path, RendererType type, bool relativePath = true, string suffix = "Renderer") {
-            MilesRendererData milesRendererData = CreateRendererData(type);
+        internal static FunnyRendererData CreateRendererAsset(string path, RendererType type, bool relativePath = true, string suffix = "Renderer") {
+            FunnyRendererData FunnyRendererData = CreateRendererData(type);
             string dataPath;
             if (relativePath) {
                 dataPath =
@@ -112,18 +112,18 @@ namespace UnityEngine.Miles.Rendering {
             } else {
                 dataPath = path;
             }
-            AssetDatabase.CreateAsset(milesRendererData, dataPath);
-            return milesRendererData;
+            AssetDatabase.CreateAsset(FunnyRendererData, dataPath);
+            return FunnyRendererData;
         }
 
         /// <summary>
         /// 根据不同的 renderer 类型实现，创建不同的 renderer 实例并返回
         /// </summary>
-        static MilesRendererData CreateRendererData(RendererType type) {
+        static FunnyRendererData CreateRendererData(RendererType type) {
             switch (type) {
-                case RendererType.MilesRenderer:
+                case RendererType.FunnyRenderer:
                 default: {
-                        var rendererData = CreateInstance<MilesRendererData>();
+                        var rendererData = CreateInstance<FunnyRendererData>();
                         return rendererData;
                     }
             }
