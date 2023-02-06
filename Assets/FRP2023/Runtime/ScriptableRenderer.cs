@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Unity.Collections;
 
 namespace UnityEngine.Funny.Rendering {
     /// <summary>
@@ -10,6 +11,34 @@ namespace UnityEngine.Funny.Rendering {
     /// </summary>
     public abstract partial class ScriptableRenderer : IDisposable {
         List<ScriptableRenderPass> m_ActiveRenderPassQueue = new List<ScriptableRenderPass>(32);
+
+        // 共四个 render pass block，before rendering, opaque, transparent, after rendering
+        const int k_RenderPassBlockCount = 4;
+
+        /// <summary>
+        /// 渲染流程会将 passes 按照索引分成一个个 block，按照 block 为单位执行该 block 中的所有 passes
+        /// </summary>
+        internal struct RenderBlocks : IDisposable {
+
+            // 用于保存 render pass event 的集合
+            private NativeArray<RenderPassEvent> m_BlockEventLimits;
+
+            // 用于保存当前需要被渲染的 render passes 的 index
+            private NativeArray<int> m_BlockRanges;
+
+            public RenderBlocks(List<ScriptableRenderPass> activeRenderPassQueue) {
+                m_BlockEventLimits = new NativeArray<RenderPassEvent>(k_RenderPassBlockCount, Allocator.Temp);
+                m_BlockRanges = new NativeArray<int>(m_BlockEventLimits.Length + 1, Allocator.Temp);
+            }
+
+            void FillBlockRanges(List<ScriptableRenderPass> activeRenderPassQueue) {
+
+
+            }
+
+            public void Dispose() {
+            }
+        }
 
         public ScriptableRenderer(ScriptableRendererData scriptableRendererData) {
             // 在 renderer 逻辑开始前清空所有 passes
@@ -35,11 +64,12 @@ namespace UnityEngine.Funny.Rendering {
         public void Execute(ScriptableRenderContext renderContext, ref RenderingData renderingData) {
             // todo, need use renderblock for rendering passes
 
+
             internalFinishRendering(renderContext, false, renderingData);
         }
 
         /// <summary>
-        /// 用于将新增的 renderfeature 添加到渲染流程当中
+        /// 用于将新增的 render features 添加到渲染流程当中
         /// </summary>
         internal void AddRenderPasses(ref RenderingData renderingData) {
         }

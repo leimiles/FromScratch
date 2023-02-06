@@ -1038,7 +1038,7 @@ namespace UnityEngine.Rendering.Universal {
 
                 BeginXRRendering(cmd, context, ref renderingData.cameraData);
 
-                // In the opaque and transparent blocks the main rendering executes.
+                // miles, 不透明与透明渲染是单独处理的
 
                 // Opaque blocks...
                 if (renderBlocks.GetLength(RenderPassBlock.MainRenderingOpaque) > 0) {
@@ -1170,7 +1170,7 @@ namespace UnityEngine.Rendering.Universal {
         internal void AddRenderPasses(ref RenderingData renderingData) {
             using var profScope = new ProfilingScope(null, Profiling.addRenderPasses);
 
-            // Funny, Add render passes from custom renderer features
+            // miles, 向 feature 中添加自定义的 passes
             for (int i = 0; i < rendererFeatures.Count; ++i) {
                 if (!rendererFeatures[i].isActive) {
                     continue;

@@ -922,7 +922,7 @@ namespace UnityEngine.Rendering.Universal {
             }
 
 
-            // Funny, 绘制天空盒
+            // miles, 绘制天空盒
             if (camera.clearFlags == CameraClearFlags.Skybox && cameraData.renderType != CameraRenderType.Overlay) {
                 if (RenderSettings.skybox != null || (camera.TryGetComponent(out Skybox cameraSkybox) && cameraSkybox.material != null))
                     EnqueuePass(m_DrawSkyboxPass);
