@@ -27,13 +27,14 @@ namespace UnityEngine.Funny.Rendering {
         /// </summary>
         public void EnqueuePass(ScriptableRenderPass scriptableRenderPass) {
             m_ActiveRenderPassQueue.Add(scriptableRenderPass);
-            Debug.Log(m_ActiveRenderPassQueue.Count);
         }
 
         /// <summary>
         /// 执行场景渲染，即按照插入的 pass 顺序执行，不需要子类 renderer 设计实现
         /// </summary>
         public void Execute(ScriptableRenderContext renderContext, ref RenderingData renderingData) {
+            // todo, need use renderblock for rendering passes
+
             internalFinishRendering(renderContext, false, renderingData);
         }
 
