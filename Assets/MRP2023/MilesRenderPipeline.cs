@@ -61,13 +61,24 @@ namespace UnityEngine.Miles.Rendering {
         /// </summary>
         static void RenderSingleCamera(ScriptableRenderContext renderContext, ref CameraData cameraData) {
             Camera camera = cameraData.camera;
+
             var renderer = cameraData.scriptableRenderer;
             if (renderer == null) {
                 Debug.LogWarning("Can't find renderer for camera, quit rendering");
                 return;
             }
 
-            //InitializeRenderingData(out var renderingData);
+            // 渲染开始前需要进行 cullingResult 设置
+            if (!TryGetCullingParameters(cameraData, out var cullingParameters)) {
+                return;
+            }
+
+            CommandBuffer cmd = CommandBufferPool.Get();
+
+            var cullResults = renderContext.Cull(ref cullingParameters);
+
+            // 需要初始化 rendering data 作为所有被渲染对象的渲染设置
+            InitializeRenderingData(MilesRenderPipeline.currentPipelineAsset, ref cameraData, ref cullResults, cmd, out var renderingData);
             //renderer.AddRenderPasses(ref renderingData);
         }
 
@@ -76,18 +87,28 @@ namespace UnityEngine.Miles.Rendering {
         /// </summary>
         static void InitializeCameraData(Camera camera, MilesAdditionalCameraData additionalCameraData, bool resolveFinalTarget, out CameraData cameraData) {
             cameraData = new CameraData();
-            InitializeCameraDataViaAdditionalCameraData(camera, additionalCameraData, resolveFinalTarget, ref cameraData);
+            InitializeAdditionalCameraData(camera, additionalCameraData, resolveFinalTarget, ref cameraData);
         }
 
-        static void InitializeRenderingData(ref CullingResults cullingResults, out RenderingData renderingData) {
-
+        static void InitializeRenderingData(MilesRenderPipelineAsset asset, ref CameraData cameraData, ref CullingResults cullingResults, CommandBuffer cmd, out RenderingData renderingData) {
+            renderingData.cullingResults = cullingResults;
+            renderingData.cameraData = cameraData;
+            renderingData.commandBuffer = cmd;
         }
 
         /// <summary>
         /// 通过摄影机的 additional data 初始化 cameraData
         /// </summary>
-        static void InitializeCameraDataViaAdditionalCameraData(Camera camera, MilesAdditionalCameraData milesAdditionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
+        static void InitializeAdditionalCameraData(Camera camera, MilesAdditionalCameraData milesAdditionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
+            cameraData.camera = camera;
             cameraData.scriptableRenderer = currentPipelineAsset.scriptableRenderer;
+        }
+
+        /// <summary>
+        /// 获得视锥剔除数据的参数 culling results
+        /// </summary>
+        static bool TryGetCullingParameters(CameraData cameraData, out ScriptableCullingParameters cullingParameters) {
+            return cameraData.camera.TryGetCullingParameters(false, out cullingParameters);
         }
     }
 }
