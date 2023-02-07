@@ -95,6 +95,9 @@ namespace UnityEngine.Funny.Rendering {
 
             renderContext.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
+
+            // 最终提交渲染命令
+            renderContext.Submit();
         }
 
         /// <summary>

@@ -178,9 +178,13 @@ namespace UnityEngine.Funny.Rendering {
         }
 
         /// <summary>
-        /// 执行 render block，此方法中 submit 到 GPU 的步骤时可选的，默认情况下不会在此处进行 submit
+        /// 执行执行指定 render block 中的 render passes，此方法中 submit 到 GPU 的步骤时可选的，默认情况下不会在此处进行 submit
         /// </summary>
         void ExecuteBlock(int renderPassBlockIndex, in RenderBlocks renderBlocks, ScriptableRenderContext renderContext, ref RenderingData renderingData, bool sumbit = false) {
+            foreach (int currentIndex in renderBlocks.GetRange(renderPassBlockIndex)) {
+                var renderPass = m_ActiveRenderPassQueue[currentIndex];
+                ExecuteRenderPass(renderContext, renderPass, ref renderingData);
+            }
             if (sumbit) {
                 renderContext.Submit();
             }
@@ -190,7 +194,7 @@ namespace UnityEngine.Funny.Rendering {
         /// 执行每个 render pass
         /// </summary>
         void ExecuteRenderPass(ScriptableRenderContext renderContext, ScriptableRenderPass renderPass, ref RenderingData renderingData) {
-
+            renderPass.Execute(renderContext, ref renderingData);
         }
 
         /// <summary>
