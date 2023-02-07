@@ -1049,7 +1049,7 @@ namespace UnityEngine.Rendering.Universal {
                     ExecuteBlock(RenderPassBlock.MainRenderingOpaque, in renderBlocks, context, ref renderingData);
                 }
 
-                // Transparent blocks...
+                // Transparent blocks... miles, including skybox
                 if (renderBlocks.GetLength(RenderPassBlock.MainRenderingTransparent) > 0) {
                     using var profScope = new ProfilingScope(null, Profiling.RenderBlock.mainRenderingTransparent);
                     ExecuteBlock(RenderPassBlock.MainRenderingTransparent, in renderBlocks, context, ref renderingData);
@@ -1252,9 +1252,10 @@ namespace UnityEngine.Rendering.Universal {
                 var renderPass = m_ActiveRenderPassQueue[currIndex];
                 ExecuteRenderPass(context, renderPass, ref renderingData);
             }
-
-            if (submit)
+            // miles, no submit by default
+            if (submit) {
                 context.Submit();
+            }
         }
 
         private bool IsRenderPassEnabled(ScriptableRenderPass renderPass) {
