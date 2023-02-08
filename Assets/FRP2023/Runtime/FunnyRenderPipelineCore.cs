@@ -37,8 +37,6 @@ namespace UnityEngine.Funny.Rendering {
 
         // 用于描述摄影机渲染纹理的大小，格式等设置信息
         public RenderTextureDescriptor cameraRenderTextureDescriptor;
-
-
     }
 
     /// <summary>

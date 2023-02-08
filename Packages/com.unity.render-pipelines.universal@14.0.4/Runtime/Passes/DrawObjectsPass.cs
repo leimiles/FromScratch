@@ -4,24 +4,20 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Experimental.Rendering.RenderGraphModule;
 using UnityEngine.Profiling;
 
-namespace UnityEngine.Rendering.Universal.Internal
-{
+namespace UnityEngine.Rendering.Universal.Internal {
     /// <summary>
     /// Extension of DrawObjectPass that also output Rendering Layers Texture as second render target.
     /// </summary>
-    internal class DrawObjectsWithRenderingLayersPass : DrawObjectsPass
-    {
+    internal class DrawObjectsWithRenderingLayersPass : DrawObjectsPass {
         RTHandle[] m_ColorTargetIndentifiers;
         RTHandle m_DepthTargetIndentifiers;
 
         public DrawObjectsWithRenderingLayersPass(URPProfileId profilerTag, bool opaque, RenderPassEvent evt, RenderQueueRange renderQueueRange, LayerMask layerMask, StencilState stencilState, int stencilReference) :
-            base(profilerTag, opaque, evt, renderQueueRange, layerMask, stencilState, stencilReference)
-        {
+            base(profilerTag, opaque, evt, renderQueueRange, layerMask, stencilState, stencilReference) {
             m_ColorTargetIndentifiers = new RTHandle[2];
         }
 
-        public void Setup(RTHandle colorAttachment, RTHandle renderingLayersTexture, RTHandle depthAttachment)
-        {
+        public void Setup(RTHandle colorAttachment, RTHandle renderingLayersTexture, RTHandle depthAttachment) {
             if (colorAttachment == null)
                 throw new ArgumentException("Color attachment can not be null", "colorAttachment");
             if (renderingLayersTexture == null)
@@ -34,13 +30,11 @@ namespace UnityEngine.Rendering.Universal.Internal
             m_DepthTargetIndentifiers = depthAttachment;
         }
 
-        public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
-        {
+        public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor) {
             ConfigureTarget(m_ColorTargetIndentifiers, m_DepthTargetIndentifiers);
         }
 
-        protected override void OnExecute(CommandBuffer cmd)
-        {
+        protected override void OnExecute(CommandBuffer cmd) {
             CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.WriteRenderingLayers, true);
         }
     }
@@ -51,8 +45,7 @@ namespace UnityEngine.Rendering.Universal.Internal
     /// You can use this pass to render objects that have a material and/or shader
     /// with the pass names UniversalForward or SRPDefaultUnlit.
     /// </summary>
-    public class DrawObjectsPass : ScriptableRenderPass
-    {
+    public class DrawObjectsPass : ScriptableRenderPass {
         FilteringSettings m_FilteringSettings;
         RenderStateBlock m_RenderStateBlock;
         List<ShaderTagId> m_ShaderTagIdList = new List<ShaderTagId>();
@@ -82,8 +75,7 @@ namespace UnityEngine.Rendering.Universal.Internal
         /// <seealso cref="RenderQueueRange"/>
         /// <seealso cref="LayerMask"/>
         /// <seealso cref="StencilState"/>
-        public DrawObjectsPass(string profilerTag, ShaderTagId[] shaderTagIds, bool opaque, RenderPassEvent evt, RenderQueueRange renderQueueRange, LayerMask layerMask, StencilState stencilState, int stencilReference)
-        {
+        public DrawObjectsPass(string profilerTag, ShaderTagId[] shaderTagIds, bool opaque, RenderPassEvent evt, RenderQueueRange renderQueueRange, LayerMask layerMask, StencilState stencilState, int stencilReference) {
             base.profilingSampler = new ProfilingSampler(nameof(DrawObjectsPass));
             m_PassData = new PassData();
             m_ProfilerTag = profilerTag;
@@ -96,8 +88,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             m_IsOpaque = opaque;
             m_ShouldTransparentsReceiveShadows = false;
 
-            if (stencilState.enabled)
-            {
+            if (stencilState.enabled) {
                 m_RenderStateBlock.stencilReference = stencilReference;
                 m_RenderStateBlock.mask = RenderStateMask.Stencil;
                 m_RenderStateBlock.stencilState = stencilState;
@@ -121,18 +112,15 @@ namespace UnityEngine.Rendering.Universal.Internal
         public DrawObjectsPass(string profilerTag, bool opaque, RenderPassEvent evt, RenderQueueRange renderQueueRange, LayerMask layerMask, StencilState stencilState, int stencilReference)
             : this(profilerTag,
             new ShaderTagId[] { new ShaderTagId("SRPDefaultUnlit"), new ShaderTagId("UniversalForward"), new ShaderTagId("UniversalForwardOnly") },
-            opaque, evt, renderQueueRange, layerMask, stencilState, stencilReference)
-        { }
+            opaque, evt, renderQueueRange, layerMask, stencilState, stencilReference) { }
 
         internal DrawObjectsPass(URPProfileId profileId, bool opaque, RenderPassEvent evt, RenderQueueRange renderQueueRange, LayerMask layerMask, StencilState stencilState, int stencilReference)
-            : this(profileId.GetType().Name, opaque, evt, renderQueueRange, layerMask, stencilState, stencilReference)
-        {
+            : this(profileId.GetType().Name, opaque, evt, renderQueueRange, layerMask, stencilState, stencilReference) {
             m_ProfilingSampler = ProfilingSampler.Get(profileId);
         }
 
         /// <inheritdoc/>
-        public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-        {
+        public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
             m_PassData.m_IsOpaque = m_IsOpaque;
             m_PassData.m_RenderStateBlock = m_RenderStateBlock;
             m_PassData.m_FilteringSettings = m_FilteringSettings;
@@ -144,25 +132,19 @@ namespace UnityEngine.Rendering.Universal.Internal
             ExecutePass(context, m_PassData, ref renderingData, renderingData.cameraData.IsCameraProjectionMatrixFlipped());
         }
 
-        private static void CameraSetup(CommandBuffer cmd, PassData data, ref RenderingData renderingData)
-        {
-            if (renderingData.cameraData.renderer.useDepthPriming && data.m_IsOpaque && (renderingData.cameraData.renderType == CameraRenderType.Base || renderingData.cameraData.clearDepth))
-            {
+        private static void CameraSetup(CommandBuffer cmd, PassData data, ref RenderingData renderingData) {
+            if (renderingData.cameraData.renderer.useDepthPriming && data.m_IsOpaque && (renderingData.cameraData.renderType == CameraRenderType.Base || renderingData.cameraData.clearDepth)) {
                 data.m_RenderStateBlock.depthState = new DepthState(false, CompareFunction.Equal);
                 data.m_RenderStateBlock.mask |= RenderStateMask.Depth;
-            }
-            else if (data.m_RenderStateBlock.depthState.compareFunction == CompareFunction.Equal)
-            {
+            } else if (data.m_RenderStateBlock.depthState.compareFunction == CompareFunction.Equal) {
                 data.m_RenderStateBlock.depthState = new DepthState(true, CompareFunction.LessEqual);
                 data.m_RenderStateBlock.mask |= RenderStateMask.Depth;
             }
         }
 
-        private static void ExecutePass(ScriptableRenderContext context, PassData data, ref RenderingData renderingData, bool yFlip)
-        {
+        private static void ExecutePass(ScriptableRenderContext context, PassData data, ref RenderingData renderingData, bool yFlip) {
             var cmd = renderingData.commandBuffer;
-            using (new ProfilingScope(cmd, data.m_ProfilingSampler))
-            {
+            using (new ProfilingScope(cmd, data.m_ProfilingSampler)) {
                 // Global render pass data containing various settings.
                 // x,y,z are currently unused
                 // w is used for knowing whether the object is opaque(1) or alpha blended(0)
@@ -199,8 +181,7 @@ namespace UnityEngine.Rendering.Universal.Internal
 
 #if UNITY_EDITOR
                 // When rendering the preview camera, we want the layer mask to be forced to Everything
-                if (renderingData.cameraData.isPreviewCamera)
-                {
+                if (renderingData.cameraData.isPreviewCamera) {
                     filterSettings.layerMask = -1;
                 }
 #endif
@@ -208,16 +189,12 @@ namespace UnityEngine.Rendering.Universal.Internal
                 DrawingSettings drawSettings = RenderingUtils.CreateDrawingSettings(data.m_ShaderTagIdList, ref renderingData, sortFlags);
 
                 var activeDebugHandler = GetActiveDebugHandler(ref renderingData);
-                if (activeDebugHandler != null)
-                {
+                if (activeDebugHandler != null) {
                     activeDebugHandler.DrawWithDebugRenderState(context, cmd, ref renderingData, ref drawSettings, ref filterSettings, ref data.m_RenderStateBlock,
-                        (ScriptableRenderContext ctx, ref RenderingData data, ref DrawingSettings ds, ref FilteringSettings fs, ref RenderStateBlock rsb) =>
-                        {
+                        (ScriptableRenderContext ctx, ref RenderingData data, ref DrawingSettings ds, ref FilteringSettings fs, ref RenderStateBlock rsb) => {
                             ctx.DrawRenderers(data.cullResults, ref ds, ref fs, ref rsb);
                         });
-                }
-                else
-                {
+                } else {
                     context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref filterSettings, ref data.m_RenderStateBlock);
 
                     // Render objects that did not match any shader pass with error shader
@@ -226,8 +203,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             }
         }
 
-        private class PassData
-        {
+        private class PassData {
             internal TextureHandle m_Albedo;
             internal TextureHandle m_Depth;
 
@@ -244,13 +220,11 @@ namespace UnityEngine.Rendering.Universal.Internal
             internal DrawObjectsPass pass;
         }
 
-        internal void Render(RenderGraph renderGraph, TextureHandle colorTarget, TextureHandle depthTarget, TextureHandle mainShadowsTexture, TextureHandle additionalShadowsTexture, ref RenderingData renderingData)
-        {
+        internal void Render(RenderGraph renderGraph, TextureHandle colorTarget, TextureHandle depthTarget, TextureHandle mainShadowsTexture, TextureHandle additionalShadowsTexture, ref RenderingData renderingData) {
             Camera camera = renderingData.cameraData.camera;
 
             using (var builder = renderGraph.AddRenderPass<PassData>("Draw Objects Pass", out var passData,
-                m_ProfilingSampler))
-            {
+                m_ProfilingSampler)) {
                 passData.m_Albedo = builder.UseColorBuffer(colorTarget, 0);
                 passData.m_Depth = builder.UseDepthBuffer(depthTarget, DepthAccess.Write);
 
@@ -273,14 +247,12 @@ namespace UnityEngine.Rendering.Universal.Internal
 
                 passData.pass = this;
 
-                builder.SetRenderFunc((PassData data, RenderGraphContext context) =>
-                {
+                builder.SetRenderFunc((PassData data, RenderGraphContext context) => {
                     ref var renderingData = ref data.m_RenderingData;
 
                     // TODO RENDERGRAPH figure out where to put XR proj flip logic so that it can be auto handled in render graph
 #if ENABLE_VR && ENABLE_XR_MODULE
-                    if (renderingData.cameraData.xr.enabled)
-                    {
+                    if (renderingData.cameraData.xr.enabled) {
                         // SetRenderTarget might alter the internal device state(winding order).
                         // Non-stereo buffer is already updated internally when switching render target. We update stereo buffers here to keep the consistency.
                         bool renderIntoTexture = data.m_Albedo != renderingData.cameraData.xr.renderTarget;

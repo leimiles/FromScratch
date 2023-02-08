@@ -157,7 +157,7 @@ namespace UnityEngine.Funny.Rendering {
         public abstract void Setup(ScriptableRenderContext renderContext, ref RenderingData renderingData);
 
         /// <summary>
-        /// 插入需要渲染的 pass
+        /// 插入需要渲染的 pass，就是向一个 pass list 里进行 add 操作
         /// </summary>
         public void EnqueuePass(ScriptableRenderPass scriptableRenderPass) {
             m_ActiveRenderPassQueue.Add(scriptableRenderPass);

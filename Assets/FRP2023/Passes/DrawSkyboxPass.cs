@@ -9,7 +9,12 @@ namespace UnityEngine.Funny.Rendering {
             this.renderPassEvent = renderPassEvent;
         }
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData) {
-            context.DrawSkybox(renderingData.cameraData.camera);
+            ref CameraData cameraData = ref renderingData.cameraData;
+            Camera camera = cameraData.camera;
+
+            context.DrawSkybox(camera);
         }
     }
 }
+
+

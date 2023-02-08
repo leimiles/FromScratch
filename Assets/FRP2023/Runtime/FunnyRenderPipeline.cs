@@ -101,13 +101,16 @@ namespace UnityEngine.Funny.Rendering {
         }
 
         /// <summary>
-        /// 初始化摄影机数据 cameraData
+        /// 初始化摄影机数据 camera data
         /// </summary>
         static void InitializeCameraData(Camera camera, FunnyAdditionalCameraData additionalCameraData, bool resolveFinalTarget, out CameraData cameraData) {
             cameraData = new CameraData();
             InitializeAdditionalCameraData(camera, additionalCameraData, resolveFinalTarget, ref cameraData);
         }
 
+        /// <summary>
+        /// 初始化所有渲染数据 rendering data
+        /// </summary>
         static void InitializeRenderingData(FunnyRenderPipelineAsset asset, ref CameraData cameraData, ref CullingResults cullingResults, CommandBuffer cmd, out RenderingData renderingData) {
             renderingData.cullingResults = cullingResults;
             renderingData.cameraData = cameraData;
