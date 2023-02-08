@@ -430,19 +430,22 @@ namespace UnityEngine.Rendering.Universal {
 
         internal static void RenderSingleCameraInternal(ScriptableRenderContext context, Camera camera) {
             UniversalAdditionalCameraData additionalCameraData = null;
-            if (IsGameCamera(camera))
+            if (IsGameCamera(camera)) {
+                // miles, 废码
                 camera.gameObject.TryGetComponent(out additionalCameraData);
+            }
 
             if (additionalCameraData != null && additionalCameraData.renderType != CameraRenderType.Base) {
                 Debug.LogWarning("Only Base cameras can be rendered with standalone RenderSingleCamera. Camera will be skipped.");
                 return;
             }
-
+            // miles, addtionalCameraData 在这里是 null
             InitializeCameraData(camera, additionalCameraData, true, out var cameraData);
 #if ADAPTIVE_PERFORMANCE_2_0_0_OR_NEWER
             if (asset.useAdaptivePerformance)
                 ApplyAdaptivePerformance(ref cameraData);
 #endif
+            // miles, 渲染非 game 摄影机
             RenderSingleCamera(context, ref cameraData, cameraData.postProcessEnabled);
         }
 
@@ -497,7 +500,7 @@ namespace UnityEngine.Rendering.Universal {
             ProfilingSampler sampler = Profiling.TryGetOrAddCameraSampler(camera);
             using (new ProfilingScope(cmdScope, sampler)) // Enqueues a "BeginSample" command into the CommandBuffer cmd
             {
-                renderer.Clear(cameraData.renderType);
+                renderer.Clear(cameraData.cameraRenderType);
 
                 using (new ProfilingScope(null, Profiling.Pipeline.Renderer.setupCullingParameters)) {
                     renderer.OnPreCullRenderPasses(in cameraData);
@@ -517,6 +520,8 @@ namespace UnityEngine.Rendering.Universal {
                     ScriptableRenderContext.EmitGeometryForCamera(camera);
 
                 var cullResults = context.Cull(ref cullingParameters);
+
+
                 // miles, 初始化 renderingData
                 InitializeRenderingData(asset, ref cameraData, ref cullResults, anyPostProcessingEnabled, cmd, out var renderingData);
 #if ADAPTIVE_PERFORMANCE_2_0_0_OR_NEWER
@@ -819,7 +824,7 @@ namespace UnityEngine.Rendering.Universal {
             if (!cameraData.postProcessEnabled)
                 return false;
 
-            if (cameraData.antialiasing == AntialiasingMode.SubpixelMorphologicalAntiAliasing && cameraData.renderType == CameraRenderType.Base)
+            if (cameraData.antialiasing == AntialiasingMode.SubpixelMorphologicalAntiAliasing && cameraData.cameraRenderType == CameraRenderType.Base)
                 return true;
 
             return CheckPostProcessForDepth();
@@ -903,7 +908,7 @@ namespace UnityEngine.Rendering.Universal {
             using var profScope = new ProfilingScope(null, Profiling.Pipeline.initializeStackedCameraData);
 
             var settings = asset;
-            cameraData.targetTexture = baseCamera.targetTexture;
+            cameraData.cameraTargetTexture = baseCamera.targetTexture;
             cameraData.cameraType = baseCamera.cameraType;
             bool isSceneViewCamera = cameraData.isSceneViewCamera;
 
@@ -1003,7 +1008,7 @@ namespace UnityEngine.Rendering.Universal {
 
             bool isSceneViewCamera = cameraData.isSceneViewCamera;
             if (isSceneViewCamera) {
-                cameraData.renderType = CameraRenderType.Base;
+                cameraData.cameraRenderType = CameraRenderType.Base;
                 cameraData.clearDepth = true;
                 cameraData.postProcessEnabled = CoreUtils.ArePostProcessesEnabled(camera);
                 cameraData.requiresDepthTexture = settings.supportsCameraDepthTexture;
@@ -1013,7 +1018,7 @@ namespace UnityEngine.Rendering.Universal {
                 cameraData.screenSizeOverride = cameraData.pixelRect.size;
                 cameraData.screenCoordScaleBias = Vector2.one;
             } else if (additionalCameraData != null) {
-                cameraData.renderType = additionalCameraData.renderType;
+                cameraData.cameraRenderType = additionalCameraData.renderType;
                 cameraData.clearDepth = (additionalCameraData.renderType != CameraRenderType.Base) ? additionalCameraData.clearDepth : true;
                 cameraData.postProcessEnabled = additionalCameraData.renderPostProcessing;
                 cameraData.maxShadowDistance = (additionalCameraData.renderShadows) ? cameraData.maxShadowDistance : 0.0f;
@@ -1024,7 +1029,7 @@ namespace UnityEngine.Rendering.Universal {
                 cameraData.screenSizeOverride = additionalCameraData.screenSizeOverride;
                 cameraData.screenCoordScaleBias = additionalCameraData.screenCoordScaleBias;
             } else {
-                cameraData.renderType = CameraRenderType.Base;
+                cameraData.cameraRenderType = CameraRenderType.Base;
                 cameraData.clearDepth = true;
                 cameraData.postProcessEnabled = false;
                 cameraData.requiresDepthTexture = settings.supportsCameraDepthTexture;
@@ -1044,7 +1049,7 @@ namespace UnityEngine.Rendering.Universal {
 
             // Disable depth and color copy. We should add it in the renderer instead to avoid performance pitfalls
             // of camera stacking breaking render pass execution implicitly.
-            bool isOverlayCamera = (cameraData.renderType == CameraRenderType.Overlay);
+            bool isOverlayCamera = (cameraData.cameraRenderType == CameraRenderType.Overlay);
             if (isOverlayCamera) {
                 cameraData.requiresOpaqueTexture = false;
             }

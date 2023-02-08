@@ -748,7 +748,7 @@ namespace UnityEngine.Rendering.Universal {
                     // is because this need to be called for each eye in multi pass VR.
                     // The side effect is that this will override some shader properties we already setup and we will have to
                     // reset them.
-                    if (data.cameraData.renderType == CameraRenderType.Base) {
+                    if (data.cameraData.cameraRenderType == CameraRenderType.Base) {
                         context.renderContext.SetupCameraProperties(data.cameraData.camera);
                         data.renderer.SetPerCameraShaderVariables(context.cmd, ref data.cameraData, !data.isTargetBackbuffer);
                     } else {
@@ -1014,7 +1014,8 @@ namespace UnityEngine.Rendering.Universal {
                     // is because this need to be called for each eye in multi pass VR.
                     // The side effect is that this will override some shader properties we already setup and we will have to
                     // reset them.
-                    if (cameraData.renderType == CameraRenderType.Base) {
+                    if (cameraData.cameraRenderType == CameraRenderType.Base) {
+                        // miles, 设置摄影机属性，即将被优化
                         context.SetupCameraProperties(camera);
                         SetPerCameraShaderVariables(cmd, ref cameraData);
                     } else {
@@ -1128,7 +1129,7 @@ namespace UnityEngine.Rendering.Universal {
 
             // Overlay cameras composite on top of previous ones. They don't clear color.
             // For overlay cameras we check if depth should be cleared on not.
-            if (cameraData.renderType == CameraRenderType.Overlay)
+            if (cameraData.cameraRenderType == CameraRenderType.Overlay)
                 return (cameraData.clearDepth) ? ClearFlag.DepthStencil : ClearFlag.None;
 
             // Certain debug modes (e.g. wireframe/overdraw modes) require that we override clear flags and clear everything.

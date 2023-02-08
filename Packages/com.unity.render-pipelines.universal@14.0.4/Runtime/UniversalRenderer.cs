@@ -435,7 +435,7 @@ namespace UnityEngine.Rendering.Universal {
 
             bool depthPrimingRequested = (m_DepthPrimingRecommended && m_DepthPrimingMode == DepthPrimingMode.Auto) || m_DepthPrimingMode == DepthPrimingMode.Forced;
             bool isForwardRenderingMode = m_RenderingMode == RenderingMode.Forward || m_RenderingMode == RenderingMode.ForwardPlus;
-            bool isFirstCameraToWriteDepth = cameraData.renderType == CameraRenderType.Base || cameraData.clearDepth;
+            bool isFirstCameraToWriteDepth = cameraData.cameraRenderType == CameraRenderType.Base || cameraData.clearDepth;
             // Enabled Depth priming when baking Reflection Probes causes artefacts (UUM-12397)
             bool isNotReflectionCamera = cameraData.cameraType != CameraType.Reflection;
 
@@ -465,7 +465,7 @@ namespace UnityEngine.Rendering.Universal {
                 useRenderPassEnabled = false;
 
             // Special path for depth only offscreen cameras. Only write opaques + transparents.
-            bool isOffscreenDepthTexture = cameraData.targetTexture != null && cameraData.targetTexture.format == RenderTextureFormat.Depth;
+            bool isOffscreenDepthTexture = cameraData.cameraTargetTexture != null && cameraData.cameraTargetTexture.format == RenderTextureFormat.Depth;
             if (isOffscreenDepthTexture) {
                 ConfigureCameraTarget(k_CameraTarget, k_CameraTarget);
                 SetupRenderPasses(in renderingData);
@@ -518,7 +518,7 @@ namespace UnityEngine.Rendering.Universal {
                 m_DeferredLights.HasNormalPrepass = renderPassInputs.requiresNormalsTexture;
 
                 m_DeferredLights.ResolveMixedLightingMode(ref renderingData);
-                m_DeferredLights.IsOverlay = cameraData.renderType == CameraRenderType.Overlay;
+                m_DeferredLights.IsOverlay = cameraData.cameraRenderType == CameraRenderType.Overlay;
             }
 
             // Should apply post-processing after rendering this camera?
@@ -633,7 +633,7 @@ namespace UnityEngine.Rendering.Universal {
             m_ColorBufferSystem.SetCameraSettings(colorDescriptor, FilterMode.Bilinear);
 
             // Configure all settings require to start a new camera stack (base camera only)
-            if (cameraData.renderType == CameraRenderType.Base) {
+            if (cameraData.cameraRenderType == CameraRenderType.Base) {
                 //Scene filtering redraws the objects on top of the resulting frame. It has to draw directly to the sceneview buffer.
                 bool sceneViewFilterEnabled = camera.sceneViewFilterMode == Camera.SceneViewFilterMode.ShowFiltered;
                 bool intermediateRenderTexture = (createColorTexture || createDepthTexture) && !sceneViewFilterEnabled;
@@ -916,14 +916,14 @@ namespace UnityEngine.Rendering.Universal {
                 // XRTODO: investigate DX XR clear issues.
                 if (SystemInfo.usesLoadStoreActions && !hasPassesBeforeOpaque)
 #endif
-                    renderOpaqueForwardPass.ConfigureClear((cameraData.renderType == CameraRenderType.Base) ? ClearFlag.Color : ClearFlag.None, Color.black);
+                    renderOpaqueForwardPass.ConfigureClear((cameraData.cameraRenderType == CameraRenderType.Base) ? ClearFlag.Color : ClearFlag.None, Color.black);
 
                 EnqueuePass(renderOpaqueForwardPass);
             }
 
 
             // miles, 绘制天空盒
-            if (camera.clearFlags == CameraClearFlags.Skybox && cameraData.renderType != CameraRenderType.Overlay) {
+            if (camera.clearFlags == CameraClearFlags.Skybox && cameraData.cameraRenderType != CameraRenderType.Overlay) {
                 if (RenderSettings.skybox != null || (camera.TryGetComponent(out Skybox cameraSkybox) && cameraSkybox.material != null))
                     EnqueuePass(m_DrawSkyboxPass);
             }
@@ -938,7 +938,7 @@ namespace UnityEngine.Rendering.Universal {
 
             // Set the depth texture to the far Z if we do not have a depth prepass or copy depth
             // Don't do this for Overlay cameras to not lose depth data in between cameras (as Base is guaranteed to be first)
-            if (cameraData.renderType == CameraRenderType.Base && !requiresDepthPrepass && !requiresDepthCopyPass)
+            if (cameraData.cameraRenderType == CameraRenderType.Base && !requiresDepthPrepass && !requiresDepthCopyPass)
                 Shader.SetGlobalTexture("_CameraDepthTexture", SystemInfo.usesReversedZBuffer ? Texture2D.blackTexture : Texture2D.whiteTexture);
 
             if (copyColorPass) {
@@ -1278,7 +1278,7 @@ namespace UnityEngine.Rendering.Universal {
         bool RequiresIntermediateColorTexture(ref CameraData cameraData) {
             // When rendering a camera stack we always create an intermediate render texture to composite camera results.
             // We create it upon rendering the Base camera.
-            if (cameraData.renderType == CameraRenderType.Base && !cameraData.resolveFinalTarget)
+            if (cameraData.cameraRenderType == CameraRenderType.Base && !cameraData.resolveFinalTarget)
                 return true;
 
             // Always force rendering into intermediate color texture if deferred rendering mode is selected.
@@ -1296,7 +1296,7 @@ namespace UnityEngine.Rendering.Universal {
             bool isScaledRender = cameraData.imageScalingMode != ImageScalingMode.None;
             bool isCompatibleBackbufferTextureDimension = cameraTargetDescriptor.dimension == TextureDimension.Tex2D;
             bool requiresExplicitMsaaResolve = msaaSamples > 1 && PlatformRequiresExplicitMsaaResolve();
-            bool isOffscreenRender = cameraData.targetTexture != null && !isSceneViewCamera;
+            bool isOffscreenRender = cameraData.cameraTargetTexture != null && !isSceneViewCamera;
             bool isCapturing = cameraData.captureActions != null;
 
 #if ENABLE_VR && ENABLE_XR_MODULE

@@ -34,12 +34,14 @@ namespace UnityEngine.Funny.Rendering {
                 // 判断是否是 game 窗口
                 if (IsGameCamera(camera)) {
                     RenderCameraStack(renderContext, camera);
+                } else {
+                    RenderSingleCameraInternal(renderContext, camera);
                 }
             }
         }
 
         /// <summary>
-        /// 渲染开始，以每个摄影机的 camera stack 为单位进行渲染
+        /// Game View 渲染开始，以每个摄影机的 camera stack 为单位进行渲染
         /// </summary>
         static void RenderCameraStack(ScriptableRenderContext renderContext, Camera baseCamera) {
             // 获取摄影机的 camerdaAddtional 数据，该类扩展了摄影机属性
@@ -76,6 +78,12 @@ namespace UnityEngine.Funny.Rendering {
             // 第一个 commandbuffer
             CommandBuffer cmd = CommandBufferPool.Get();
 
+#if UNITY_EDITOR
+            if (cameraData.isSceneViewCamera) {
+                ScriptableRenderContext.EmitWorldGeometryForSceneView(camera);
+            }
+#endif
+
             var cullResults = renderContext.Cull(ref cullingParameters);
 
             // 需要初始化 rendering data 作为所有被渲染对象的渲染设置
@@ -101,11 +109,52 @@ namespace UnityEngine.Funny.Rendering {
         }
 
         /// <summary>
+        /// 对于非 game 窗口，用此方法渲染
+        /// </summary>
+        internal static void RenderSingleCameraInternal(ScriptableRenderContext renderContext, Camera camera) {
+            FunnyAdditionalCameraData additionalCameraData = null;
+
+            //RenderSingleCamera(renderContext, )
+            InitializeCameraData(camera, additionalCameraData, true, out var cameraData);
+            RenderSingleCamera(renderContext, ref cameraData);
+
+        }
+
+        /// <summary>
         /// 初始化摄影机数据 camera data
         /// </summary>
         static void InitializeCameraData(Camera camera, FunnyAdditionalCameraData additionalCameraData, bool resolveFinalTarget, out CameraData cameraData) {
             cameraData = new CameraData();
+            InitializeStackedCameraData(camera, additionalCameraData, ref cameraData);
             InitializeAdditionalCameraData(camera, additionalCameraData, resolveFinalTarget, ref cameraData);
+        }
+
+        /// <summary>
+        /// 通过摄影机的基本信息初始化 camera data
+        /// </summary>
+        static void InitializeStackedCameraData(Camera camera, FunnyAdditionalCameraData additionalCameraData, ref CameraData cameraData) {
+            cameraData.cameraTargetTexture = camera.targetTexture;
+            cameraData.cameraType = camera.cameraType;
+        }
+
+        /// <summary>
+        /// 通过摄影机的 additional data 初始化 camera data
+        /// </summary>
+        static void InitializeAdditionalCameraData(Camera camera, FunnyAdditionalCameraData additionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
+            cameraData.camera = camera;
+            cameraData.scriptableRenderer = currentPipelineAsset.scriptableRenderer;
+
+            if (cameraData.isSceneViewCamera) {
+                cameraData.cameraRenderType = CameraRenderType.Base;
+
+            } else if (additionalCameraData != null) {
+                cameraData.cameraRenderType = additionalCameraData.cameraRenderType;
+
+            } else {
+                cameraData.cameraRenderType = CameraRenderType.Base;
+            }
+
+            cameraData.SetViewAndProjectionMatrix(camera.worldToCameraMatrix, camera.projectionMatrix);
         }
 
         /// <summary>
@@ -115,14 +164,6 @@ namespace UnityEngine.Funny.Rendering {
             renderingData.cullingResults = cullingResults;
             renderingData.cameraData = cameraData;
             renderingData.commandBuffer = cmd;
-        }
-
-        /// <summary>
-        /// 通过摄影机的 additional data 初始化 cameraData
-        /// </summary>
-        static void InitializeAdditionalCameraData(Camera camera, FunnyAdditionalCameraData FunnyAdditionalCameraData, bool resolveFinalTarget, ref CameraData cameraData) {
-            cameraData.camera = camera;
-            cameraData.scriptableRenderer = currentPipelineAsset.scriptableRenderer;
         }
 
         /// <summary>

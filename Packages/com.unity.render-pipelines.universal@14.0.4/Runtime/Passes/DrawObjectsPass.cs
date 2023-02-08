@@ -133,7 +133,7 @@ namespace UnityEngine.Rendering.Universal.Internal {
         }
 
         private static void CameraSetup(CommandBuffer cmd, PassData data, ref RenderingData renderingData) {
-            if (renderingData.cameraData.renderer.useDepthPriming && data.m_IsOpaque && (renderingData.cameraData.renderType == CameraRenderType.Base || renderingData.cameraData.clearDepth)) {
+            if (renderingData.cameraData.renderer.useDepthPriming && data.m_IsOpaque && (renderingData.cameraData.cameraRenderType == CameraRenderType.Base || renderingData.cameraData.clearDepth)) {
                 data.m_RenderStateBlock.depthState = new DepthState(false, CompareFunction.Equal);
                 data.m_RenderStateBlock.mask |= RenderStateMask.Depth;
             } else if (data.m_RenderStateBlock.depthState.compareFunction == CompareFunction.Equal) {
@@ -174,7 +174,7 @@ namespace UnityEngine.Rendering.Universal.Internal {
 
                 Camera camera = renderingData.cameraData.camera;
                 var sortFlags = (data.m_IsOpaque) ? renderingData.cameraData.defaultOpaqueSortFlags : SortingCriteria.CommonTransparent;
-                if (renderingData.cameraData.renderer.useDepthPriming && data.m_IsOpaque && (renderingData.cameraData.renderType == CameraRenderType.Base || renderingData.cameraData.clearDepth))
+                if (renderingData.cameraData.renderer.useDepthPriming && data.m_IsOpaque && (renderingData.cameraData.cameraRenderType == CameraRenderType.Base || renderingData.cameraData.clearDepth))
                     sortFlags = SortingCriteria.SortingLayer | SortingCriteria.RenderQueue | SortingCriteria.OptimizeStateChanges | SortingCriteria.CanvasOrder;
 
                 var filterSettings = data.m_FilteringSettings;

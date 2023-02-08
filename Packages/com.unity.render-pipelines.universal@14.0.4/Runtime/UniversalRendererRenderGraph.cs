@@ -107,12 +107,12 @@ namespace UnityEngine.Rendering.Universal
                 createColorTexture |= createDepthTexture;
 #endif
             bool depthPriming = IsDepthPrimingEnabled(ref renderingData.cameraData);
-            depthPriming &= requiresDepthPrepass && (createDepthTexture || createColorTexture) && m_RenderingMode == RenderingMode.Forward && (renderingData.cameraData.renderType == CameraRenderType.Base || renderingData.cameraData.clearDepth);
+            depthPriming &= requiresDepthPrepass && (createDepthTexture || createColorTexture) && m_RenderingMode == RenderingMode.Forward && (renderingData.cameraData.cameraRenderType == CameraRenderType.Base || renderingData.cameraData.clearDepth);
 
             if (useRenderPassEnabled || depthPriming)
                 createColorTexture |= createDepthTexture;
 
-            if (renderingData.cameraData.renderType == CameraRenderType.Base)
+            if (renderingData.cameraData.cameraRenderType == CameraRenderType.Base)
             {
                 //Scene filtering redraws the objects on top of the resulting frame. It has to draw directly to the sceneview buffer.
                 bool sceneViewFilterEnabled = renderingData.cameraData.camera.sceneViewFilterMode == Camera.SceneViewFilterMode.ShowFiltered;
@@ -126,7 +126,7 @@ namespace UnityEngine.Rendering.Universal
         {
             ref CameraData cameraData = ref renderingData.cameraData;
 
-            RenderTargetIdentifier targetId = cameraData.targetTexture != null ? new RenderTargetIdentifier(cameraData.targetTexture) : BuiltinRenderTextureType.CameraTarget;
+            RenderTargetIdentifier targetId = cameraData.cameraTargetTexture != null ? new RenderTargetIdentifier(cameraData.cameraTargetTexture) : BuiltinRenderTextureType.CameraTarget;
 #if ENABLE_VR && ENABLE_XR_MODULE
             if (cameraData.xr.enabled)
                 targetId = cameraData.xr.renderTarget;
@@ -140,7 +140,7 @@ namespace UnityEngine.Rendering.Universal
             var createColorTexture = false;
             var createDepthTexture = false;
             // We configure this for the first camera of the stack and
-            if (cameraData.renderType == CameraRenderType.Base)
+            if (cameraData.cameraRenderType == CameraRenderType.Base)
                  m_UseIntermediateTexture = RequiresColorAndDepthTextures(out createColorTexture, out createDepthTexture, ref renderingData, renderPassInputs);
 
             if (m_UseIntermediateTexture)
@@ -276,7 +276,7 @@ namespace UnityEngine.Rendering.Universal
         {
             RTClearFlags clearFlags = RTClearFlags.None;
 
-            if (renderingData.cameraData.renderType == CameraRenderType.Base)
+            if (renderingData.cameraData.cameraRenderType == CameraRenderType.Base)
                 clearFlags = RTClearFlags.All;
             else if (renderingData.cameraData.clearDepth)
                 clearFlags = RTClearFlags.Depth;
@@ -326,7 +326,7 @@ namespace UnityEngine.Rendering.Universal
                 {
                     m_DeferredLights.UseRenderPass = false;
                     m_DeferredLights.ResolveMixedLightingMode(ref renderingData);
-                    m_DeferredLights.IsOverlay = renderingData.cameraData.renderType == CameraRenderType.Overlay;
+                    m_DeferredLights.IsOverlay = renderingData.cameraData.cameraRenderType == CameraRenderType.Overlay;
                 }
 
                 m_GBufferPass.Render(renderGraph, m_ActiveRenderGraphColor, m_ActiveRenderGraphDepth, ref renderingData, ref frameResources);
@@ -340,7 +340,7 @@ namespace UnityEngine.Rendering.Universal
             }
             // RunCustomPasses(RenderPassEvent.AfterOpaque);
 
-            if (renderingData.cameraData.renderType == CameraRenderType.Base)
+            if (renderingData.cameraData.cameraRenderType == CameraRenderType.Base)
                 m_DrawSkyboxPass.Render(renderGraph, m_ActiveRenderGraphColor, m_ActiveRenderGraphDepth, ref renderingData);
             //if (requiresDepthCopyPass)
             {

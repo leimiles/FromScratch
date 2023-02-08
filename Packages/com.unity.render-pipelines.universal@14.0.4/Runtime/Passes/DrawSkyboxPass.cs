@@ -78,6 +78,7 @@ namespace UnityEngine.Rendering.Universal {
             } else
 #endif
               {
+                // miles, 渲染天空
                 context.DrawSkybox(camera);
             }
         }

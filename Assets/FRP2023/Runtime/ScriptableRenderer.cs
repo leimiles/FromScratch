@@ -12,6 +12,9 @@ namespace UnityEngine.Funny.Rendering {
     public abstract partial class ScriptableRenderer : IDisposable {
         List<ScriptableRenderPass> m_ActiveRenderPassQueue = new List<ScriptableRenderPass>(32);
 
+        // 共四个 render pass block，before rendering, opaque, transparent, after rendering
+        const int k_RenderPassBlockCount = 4;
+
         /// 预定义的 4 个主要的渲染块 render block，这是渲染管线的主流程框架
         static class RenderPassBlock {
 
@@ -23,9 +26,6 @@ namespace UnityEngine.Funny.Rendering {
             // post processing 之后
             public static readonly int AfterRendering = 3;
         }
-
-        // 共四个 render pass block，before rendering, opaque, transparent, after rendering
-        const int k_RenderPassBlockCount = 4;
 
         /// <summary>
         /// 渲染流程会将 passes 按照索引分成一个个 block，按照 block 为单位执行该 block 中的所有 passes
@@ -167,7 +167,13 @@ namespace UnityEngine.Funny.Rendering {
         /// 执行场景渲染，即按照插入的 pass 顺序执行，不需要子类 renderer 设计实现
         /// </summary>
         public void Execute(ScriptableRenderContext renderContext, ref RenderingData renderingData) {
-            // todo, need use renderblock for rendering passes
+
+            ref CameraData cameraData = ref renderingData.cameraData;
+            Camera camera = cameraData.camera;
+
+
+            // 设置摄影机属性，会导致 shader property 的多次 reset
+            renderContext.SetupCameraProperties(camera);
 
             var renderblocks = new RenderBlocks(m_ActiveRenderPassQueue);
             if (renderblocks.GetLength(RenderPassBlock.MainRenderingTransparent) > 0) {

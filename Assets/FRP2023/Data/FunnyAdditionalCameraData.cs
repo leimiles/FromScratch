@@ -17,8 +17,10 @@ namespace UnityEngine.Funny.Rendering {
     [RequireComponent(typeof(Camera))]
     public class FunnyAdditionalCameraData : MonoBehaviour, ISerializationCallbackReceiver {
         [SerializeField] int m_RendererIndex = -1;
+
         // 摄影机的渲染类型，是 base 或者 overlay
         [SerializeField] CameraRenderType m_CameraRenderType = CameraRenderType.Base;
+
         public CameraRenderType cameraRenderType {
             get => m_CameraRenderType;
             set => m_CameraRenderType = value;

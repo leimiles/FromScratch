@@ -18,25 +18,37 @@ namespace UnityEngine.Funny.Rendering {
     /// 用于保存当前摄影机的设置信息，例如摄影机矩阵，投影矩阵，当前使用的 renderer，渲染目标等等
     /// </summary>
     public struct CameraData {
-        /*
         Matrix4x4 m_ViewMatrix;
         Matrix4x4 m_ProjectionMatrix;
-        */
 
         // 即摄影机 component
         public Camera camera;
+
         // 摄影机当前使用的 renderer
         public ScriptableRenderer scriptableRenderer;
 
-
         // 当前摄影机的渲染类型，base 或者 overlay
         public CameraRenderType cameraRenderType;
+
+        // 当前摄影机的视口类型
+        public CameraType cameraType;
 
         // 当前摄影机的渲染目标，在为 null 的时候，摄影机的目标即窗口
         public RenderTexture cameraTargetTexture;
 
         // 用于描述摄影机渲染纹理的大小，格式等设置信息
         public RenderTextureDescriptor cameraRenderTextureDescriptor;
+
+        // 是否是 scene view
+        public bool isSceneViewCamera => cameraType == CameraType.SceneView;
+
+        /// <summary>
+        /// 用于设置摄影机矩阵
+        /// </summary>
+        internal void SetViewAndProjectionMatrix(Matrix4x4 viewMatrix, Matrix4x4 projectionMatrix) {
+            m_ViewMatrix = viewMatrix;
+            m_ProjectionMatrix = projectionMatrix;
+        }
     }
 
     /// <summary>

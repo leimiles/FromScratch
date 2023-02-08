@@ -100,7 +100,7 @@ namespace UnityEngine.Rendering.Universal
         {
             ref var cameraTargetDescriptor = ref cameraData.cameraTargetDescriptor;
 
-            if (cameraData.renderType == CameraRenderType.Base)
+            if (cameraData.cameraRenderType == CameraRenderType.Base)
             {
                 m_CreateColorTexture = forceCreateColorTexture
                     || cameraData.postProcessEnabled
@@ -188,7 +188,7 @@ namespace UnityEngine.Rendering.Universal
 #endif
 
             // Pixel Perfect Camera doesn't support camera stacking.
-            if (cameraData.renderType == CameraRenderType.Base && lastCameraInStack)
+            if (cameraData.cameraRenderType == CameraRenderType.Base && lastCameraInStack)
             {
                 cameraData.camera.TryGetComponent(out ppc);
                 if (ppc != null && ppc.enabled)
@@ -226,7 +226,7 @@ namespace UnityEngine.Rendering.Universal
             ConfigureCameraTarget(colorTargetHandle, depthTargetHandle);
 
             // We generate color LUT in the base camera only. This allows us to not break render pass execution for overlay cameras.
-            if (stackHasPostProcess && cameraData.renderType == CameraRenderType.Base)
+            if (stackHasPostProcess && cameraData.cameraRenderType == CameraRenderType.Base)
             {
                 colorGradingLutPass.ConfigureDescriptor(in renderingData.postProcessingData, out var desc, out var filterMode);
                 RenderingUtils.ReAllocateIfNeeded(ref m_PostProcessPasses.m_ColorGradingLut, desc, filterMode, TextureWrapMode.Clamp, name: "_InternalGradingLut");

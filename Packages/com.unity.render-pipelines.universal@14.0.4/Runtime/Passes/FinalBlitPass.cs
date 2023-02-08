@@ -71,7 +71,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             // Overlay cameras need to output to the target described in the base camera while doing camera stack.
             ref CameraData cameraData = ref renderingData.cameraData;
 
-            RenderTargetIdentifier cameraTarget = (cameraData.targetTexture != null) ? new RenderTargetIdentifier(cameraData.targetTexture) : BuiltinRenderTextureType.CameraTarget;
+            RenderTargetIdentifier cameraTarget = (cameraData.cameraTargetTexture != null) ? new RenderTargetIdentifier(cameraData.cameraTargetTexture) : BuiltinRenderTextureType.CameraTarget;
 #if ENABLE_VR && ENABLE_XR_MODULE
             if (cameraData.xr.enabled)
             {

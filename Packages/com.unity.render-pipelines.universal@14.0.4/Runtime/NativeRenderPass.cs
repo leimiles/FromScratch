@@ -158,7 +158,7 @@ namespace UnityEngine.Rendering.Universal
                 ScriptableRenderPass pass = m_ActiveRenderPassQueue[passIdx];
 
                 var samples = pass.overrideCameraTarget ? GetFirstAllocatedRTHandle(pass).rt.descriptor.msaaSamples :
-                    (cameraData.targetTexture != null ? cameraData.targetTexture.descriptor.msaaSamples : cameraData.cameraTargetDescriptor.msaaSamples);
+                    (cameraData.cameraTargetTexture != null ? cameraData.cameraTargetTexture.descriptor.msaaSamples : cameraData.cameraTargetDescriptor.msaaSamples);
 
                 // only override existing non destructive actions
                 for (int i = 0; i < m_FinalColorStoreAction.Length; ++i)
@@ -305,8 +305,8 @@ namespace UnityEngine.Rendering.Universal
                         pass.m_ColorAttachmentIndices[i] = -1;
 
                     AttachmentDescriptor currentAttachmentDescriptor;
-                    var usesTargetTexture = cameraData.targetTexture != null;
-                    var depthOnly = (pass.colorAttachmentHandle.rt != null && IsDepthOnlyRenderTexture(pass.colorAttachmentHandle.rt)) || (usesTargetTexture && IsDepthOnlyRenderTexture(cameraData.targetTexture));
+                    var usesTargetTexture = cameraData.cameraTargetTexture != null;
+                    var depthOnly = (pass.colorAttachmentHandle.rt != null && IsDepthOnlyRenderTexture(pass.colorAttachmentHandle.rt)) || (usesTargetTexture && IsDepthOnlyRenderTexture(cameraData.cameraTargetTexture));
 
                     int samples;
                     RenderTargetIdentifier colorAttachmentTarget;
@@ -323,7 +323,7 @@ namespace UnityEngine.Rendering.Universal
                         currentAttachmentDescriptor = new AttachmentDescriptor(pass.renderTargetFormat[0] != GraphicsFormat.None ? pass.renderTargetFormat[0] : UniversalRenderPipeline.MakeRenderTextureGraphicsFormat(cameraData.isHdrEnabled, cameraData.hdrColorBufferPrecision, Graphics.preserveFramebufferAlpha));
 
                         samples = cameraData.cameraTargetDescriptor.msaaSamples;
-                        colorAttachmentTarget = usesTargetTexture ? new RenderTargetIdentifier(cameraData.targetTexture) : BuiltinRenderTextureType.CameraTarget;
+                        colorAttachmentTarget = usesTargetTexture ? new RenderTargetIdentifier(cameraData.cameraTargetTexture) : BuiltinRenderTextureType.CameraTarget;
                     }
 
                     currentAttachmentDescriptor.ConfigureTarget(colorAttachmentTarget, ((uint)finalClearFlag & (uint)ClearFlag.Color) == 0, true);
@@ -334,13 +334,13 @@ namespace UnityEngine.Rendering.Universal
                     // TODO: this is redundant and is being setup for each attachment. Needs to be done only once per mergeable pass list (we need to make sure mergeable passes use the same depth!)
                     m_ActiveDepthAttachmentDescriptor = new AttachmentDescriptor(SystemInfo.GetGraphicsFormat(DefaultFormat.DepthStencil));
                     m_ActiveDepthAttachmentDescriptor.ConfigureTarget(passDepthAttachment.nameID != BuiltinRenderTextureType.CameraTarget ? passDepthAttachment.nameID :
-                            (usesTargetTexture ? new RenderTargetIdentifier(cameraData.targetTexture.depthBuffer) : BuiltinRenderTextureType.Depth),
+                            (usesTargetTexture ? new RenderTargetIdentifier(cameraData.cameraTargetTexture.depthBuffer) : BuiltinRenderTextureType.Depth),
                         ((uint)finalClearFlag & (uint)ClearFlag.Depth) == 0, true);
 
                     if (finalClearFlag != ClearFlag.None)
                     {
                         // We don't clear color for Overlay render targets, however pipeline set's up depth only render passes as color attachments which we do need to clear
-                        if ((cameraData.renderType != CameraRenderType.Overlay || depthOnly && ((uint)finalClearFlag & (uint)ClearFlag.Color) != 0))
+                        if ((cameraData.cameraRenderType != CameraRenderType.Overlay || depthOnly && ((uint)finalClearFlag & (uint)ClearFlag.Color) != 0))
                             currentAttachmentDescriptor.ConfigureClear(finalClearColor, 1.0f, 0);
                         if (((uint)finalClearFlag & (uint)ClearFlag.Depth) != 0)
                             m_ActiveDepthAttachmentDescriptor.ConfigureClear(Color.black, 1.0f, 0);
@@ -391,7 +391,7 @@ namespace UnityEngine.Rendering.Universal
 
                 int validColorBuffersCount = m_RenderPassesAttachmentCount[currentPassHash];
 
-                var depthOnly = (renderPass.colorAttachmentHandle.rt != null && IsDepthOnlyRenderTexture(renderPass.colorAttachmentHandle.rt)) || (cameraData.targetTexture != null && IsDepthOnlyRenderTexture(cameraData.targetTexture));
+                var depthOnly = (renderPass.colorAttachmentHandle.rt != null && IsDepthOnlyRenderTexture(renderPass.colorAttachmentHandle.rt)) || (cameraData.cameraTargetTexture != null && IsDepthOnlyRenderTexture(cameraData.cameraTargetTexture));
                 bool useDepth = depthOnly || (!renderPass.overrideCameraTarget || (renderPass.overrideCameraTarget && renderPass.depthAttachmentHandle.nameID != BuiltinRenderTextureType.CameraTarget));// &&
 
                 var attachments =
@@ -656,7 +656,7 @@ namespace UnityEngine.Rendering.Universal
 
                 // In this case we want to rely on the pixelWidth/Height as the texture could be scaled from a script later and etc.
                 // and it's new dimensions might not be reflected on the targetTexture. This also applies to camera stacks rendering to a target texture.
-                if (cameraData.targetTexture != null)
+                if (cameraData.cameraTargetTexture != null)
                 {
                     targetRT.width = cameraData.pixelWidth;
                     targetRT.height = cameraData.pixelHeight;

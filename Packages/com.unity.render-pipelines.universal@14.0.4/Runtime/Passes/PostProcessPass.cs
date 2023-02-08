@@ -581,7 +581,7 @@ namespace UnityEngine.Rendering.Universal
                 else if (m_ResolveToScreen)
                 {
                     // Create RTHandle alias to use RTHandle apis
-                    RenderTargetIdentifier cameraTarget = cameraData.targetTexture != null ? new RenderTargetIdentifier(cameraData.targetTexture) : cameraTargetID;
+                    RenderTargetIdentifier cameraTarget = cameraData.cameraTargetTexture != null ? new RenderTargetIdentifier(cameraData.cameraTargetTexture) : cameraTargetID;
                     if (m_CameraTargetHandle != cameraTarget)
                     {
                         m_CameraTargetHandle?.Release();
@@ -1444,7 +1444,7 @@ namespace UnityEngine.Rendering.Universal
 
             // Note: We need to get the cameraData.targetTexture as this will get the targetTexture of the camera stack.
             // Overlay cameras need to output to the target described in the base camera while doing camera stack.
-            RenderTargetIdentifier cameraTarget = (cameraData.targetTexture != null) ? new RenderTargetIdentifier(cameraData.targetTexture) : BuiltinRenderTextureType.CameraTarget;
+            RenderTargetIdentifier cameraTarget = (cameraData.cameraTargetTexture != null) ? new RenderTargetIdentifier(cameraData.cameraTargetTexture) : BuiltinRenderTextureType.CameraTarget;
 #if ENABLE_VR && ENABLE_XR_MODULE
             if (cameraData.xr.enabled)
                 cameraTarget = cameraData.xr.renderTarget;

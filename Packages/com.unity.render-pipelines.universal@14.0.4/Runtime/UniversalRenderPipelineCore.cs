@@ -239,12 +239,12 @@ namespace UnityEngine.Rendering.Universal {
         /// The camera render type used for camera stacking.
         /// <see cref="CameraRenderType"/>
         /// </summary>
-        public CameraRenderType renderType;
+        public CameraRenderType cameraRenderType;
 
         /// <summary>
         /// Controls the final target texture for a camera. If null camera will resolve rendering to screen.
         /// </summary>
-        public RenderTexture targetTexture;
+        public RenderTexture cameraTargetTexture;
 
         /// <summary>
         /// Render texture settings used to create intermediate camera textures for rendering.
@@ -313,7 +313,7 @@ namespace UnityEngine.Rendering.Universal {
                     return !xr.renderTargetDesc.sRGB && (QualitySettings.activeColorSpace == ColorSpace.Linear);
 #endif
 
-                return targetTexture == null && Display.main.requiresSrgbBlitToBackbuffer;
+                return cameraTargetTexture == null && Display.main.requiresSrgbBlitToBackbuffer;
             }
         }
 
@@ -350,7 +350,7 @@ namespace UnityEngine.Rendering.Universal {
                 if (xr.enabled)
                     renderingToBackBufferTarget |= targetId == new RenderTargetIdentifier(xr.renderTarget, 0, CubemapFace.Unknown, 0);
 #endif
-                bool renderingToTexture = !renderingToBackBufferTarget || targetTexture != null;
+                bool renderingToTexture = !renderingToBackBufferTarget || cameraTargetTexture != null;
                 return SystemInfo.graphicsUVStartsAtTop && renderingToTexture;
             }
 
@@ -367,7 +367,7 @@ namespace UnityEngine.Rendering.Universal {
             if (xr.enabled)
                 renderingToBackBufferTarget |= targetId == xr.renderTarget;
 #endif
-            bool renderingToTexture = !renderingToBackBufferTarget || targetTexture != null;
+            bool renderingToTexture = !renderingToBackBufferTarget || cameraTargetTexture != null;
             return SystemInfo.graphicsUVStartsAtTop && renderingToTexture;
         }
 
