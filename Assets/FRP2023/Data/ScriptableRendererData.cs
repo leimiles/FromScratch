@@ -14,6 +14,7 @@ namespace UnityEngine.Funny.Rendering {
 
         /// <summary>
         /// 可以通过 rendererData 创建 renderer 实例
+        /// </summary>
         internal ScriptableRenderer InternalCreateRenderer() {
             return Create();
         }
