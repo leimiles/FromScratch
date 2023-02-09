@@ -49,29 +49,23 @@ namespace UnityEngine.Funny.Rendering {
             m_ViewMatrix = viewMatrix;
             m_ProjectionMatrix = projectionMatrix;
         }
-    }
-
-    /// <summary>
-    /// 用于支持渲染管线类的辅助功能，partial
-    /// </summary>
-    public sealed partial class FunnyRenderPipeline {
-        /// <summary>
-        /// 以当前图形设置面板中的 asset 设置文件返回
-        /// </summary>
-        public static FunnyRenderPipelineAsset currentPipelineAsset {
-            get => GraphicsSettings.currentRenderPipeline as FunnyRenderPipelineAsset;
-        }
 
         /// <summary>
-        /// 用于判断是否是 game 窗口
+        /// 如果在非 OpenGL 设备上渲染 render texture，摄影机的 projection matrix 是反的，会影响诸如 blit 的结果
         /// </summary>
-        public static bool IsGameCamera(Camera camera) {
-            if (camera == null) {
-                throw new ArgumentNullException("camera null error");
-            } else {
-                return camera.cameraType == CameraType.Game;
+        public bool IsCameraProjectionMatrixFlipped() {
+            if (ScriptableRenderer.currentRenderer != null) {
+                var targetHandleId = ScriptableRenderer.currentRenderer.cameraColorTargetHandle?.nameID;
+
+                bool renderingToBackBufferTarget = targetHandleId == BuiltinRenderTextureType.CameraTarget;
+                if (ScriptableRenderer.currentRenderer.cameraColorTargetHandle == null) {
+                    Debug.Log("todo not possible");
+                }
+                bool renderingToTexture = !renderingToBackBufferTarget || cameraTargetTexture != null;
+                return SystemInfo.graphicsUVStartsAtTop;
             }
+            return true;
         }
-
     }
+
 }

@@ -11,6 +11,14 @@ namespace UnityEngine.Funny.Rendering {
         /// 用于保存渲染管线 asset 配置文件当前的内容
         /// </summary>
         private readonly FunnyRenderPipelineAsset FunnyRenderPipelineAsset;
+
+        /// <summary>
+        /// 以当前图形设置面板中的 asset 设置文件返回
+        /// </summary>
+        public static FunnyRenderPipelineAsset currentPipelineAsset {
+            get => GraphicsSettings.currentRenderPipeline as FunnyRenderPipelineAsset;
+        }
+
         public FunnyRenderPipeline(FunnyRenderPipelineAsset FunnyRenderPipelineAsset) {
             this.FunnyRenderPipelineAsset = FunnyRenderPipelineAsset;
 
@@ -75,6 +83,8 @@ namespace UnityEngine.Funny.Rendering {
                 return;
             }
 
+            ScriptableRenderer.currentRenderer = renderer;
+
             // 第一个 commandbuffer
             CommandBuffer cmd = CommandBufferPool.Get();
 
@@ -127,6 +137,7 @@ namespace UnityEngine.Funny.Rendering {
             cameraData = new CameraData();
             InitializeStackedCameraData(camera, additionalCameraData, ref cameraData);
             InitializeAdditionalCameraData(camera, additionalCameraData, resolveFinalTarget, ref cameraData);
+            cameraData.cameraRenderTextureDescriptor = CreateRenderTextureDescriptor(camera);
         }
 
         /// <summary>
@@ -171,6 +182,30 @@ namespace UnityEngine.Funny.Rendering {
         /// </summary>
         static bool TryGetCullingParameters(CameraData cameraData, out ScriptableCullingParameters cullingParameters) {
             return cameraData.camera.TryGetCullingParameters(false, out cullingParameters);
+        }
+
+        static RenderTextureDescriptor CreateRenderTextureDescriptor(Camera camera) {
+            RenderTextureDescriptor descriptor;
+
+            if (camera.targetTexture == null) {
+                descriptor = new RenderTextureDescriptor(camera.pixelWidth, camera.pixelHeight);
+
+            } else {
+                descriptor = camera.targetTexture.descriptor;
+            }
+
+            return descriptor;
+        }
+
+        /// <summary>
+        /// 用于判断是否是 game 窗口
+        /// </summary>
+        public static bool IsGameCamera(Camera camera) {
+            if (camera == null) {
+                throw new ArgumentNullException("camera null error");
+            } else {
+                return camera.cameraType == CameraType.Game;
+            }
         }
     }
 }

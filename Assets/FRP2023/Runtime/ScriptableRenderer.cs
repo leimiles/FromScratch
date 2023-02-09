@@ -12,6 +12,29 @@ namespace UnityEngine.Funny.Rendering {
     public abstract partial class ScriptableRenderer : IDisposable {
         List<ScriptableRenderPass> m_ActiveRenderPassQueue = new List<ScriptableRenderPass>(32);
 
+        /// <summary>
+        /// 判断 SRP 是否在运行
+        /// </summary>
+        bool m_IsPipelineExecuting = false;
+
+        RTHandle m_CameraColorTargetHandle;
+        RTHandle m_CameraDepthTargetHandle;
+        RTHandle m_CameraResolveTargetHandle;
+
+        /// <summary>
+        /// 当前 camera 的 color target
+        /// </summary>
+        public RTHandle cameraColorTargetHandle {
+            get {
+                if (!m_IsPipelineExecuting) {
+                    return null;
+                }
+                return m_CameraColorTargetHandle;
+            }
+        }
+
+        internal static ScriptableRenderer currentRenderer = null;
+
         // 共四个 render pass block，before rendering, opaque, transparent, after rendering
         const int k_RenderPassBlockCount = 4;
 
@@ -168,6 +191,8 @@ namespace UnityEngine.Funny.Rendering {
         /// </summary>
         public void Execute(ScriptableRenderContext renderContext, ref RenderingData renderingData) {
 
+            m_IsPipelineExecuting = true;
+
             ref CameraData cameraData = ref renderingData.cameraData;
             Camera camera = cameraData.camera;
 
@@ -176,6 +201,14 @@ namespace UnityEngine.Funny.Rendering {
             renderContext.SetupCameraProperties(camera);
 
             var renderblocks = new RenderBlocks(m_ActiveRenderPassQueue);
+
+
+            // 绘制不透明 block 中的 passes
+            if (renderblocks.GetLength(RenderPassBlock.MainRenderingOpaque) > 0) {
+                ExecuteBlock(RenderPassBlock.MainRenderingOpaque, in renderblocks, renderContext, ref renderingData);
+            }
+
+            // 绘制透明 block 包含天空盒 pass
             if (renderblocks.GetLength(RenderPassBlock.MainRenderingTransparent) > 0) {
                 ExecuteBlock(RenderPassBlock.MainRenderingTransparent, in renderblocks, renderContext, ref renderingData);
             }
@@ -207,6 +240,14 @@ namespace UnityEngine.Funny.Rendering {
         /// 用于将新增的 render features 添加到渲染流程当中
         /// </summary>
         internal void AddRenderPasses(ref RenderingData renderingData) {
+        }
+
+        /// <summary>
+        /// 配置渲染目标
+        /// </summary>
+        public void ConfigureCameraTarget(RTHandle colorTargetHandle, RTHandle depthTargetHandle) {
+            m_CameraColorTargetHandle = colorTargetHandle;
+            m_CameraDepthTargetHandle = depthTargetHandle;
         }
 
 
