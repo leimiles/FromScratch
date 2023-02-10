@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace UnityEngine.Funny.Rendering {
-    // 渲染管线主逻辑 partial
+    // 渲染管线主逻辑，主要用于遍历摄影机，准备和初始化各种渲染资源和数据
     public sealed partial class FunnyRenderPipeline : RenderPipeline {
         /// <summary>
         /// 用于保存渲染管线 asset 配置文件当前的内容
@@ -27,7 +27,7 @@ namespace UnityEngine.Funny.Rendering {
         }
 
         /// <summary>
-        /// 将摄影机 array 转换为摄影机 list
+        /// 将摄影机 array 转换为摄影机 list，注意遍历的摄影机也包含 sceneView, preView 这些摄影机
         /// </summary>
         protected override void Render(ScriptableRenderContext renderContext, Camera[] cameras) {
             // 渲染管线起点
@@ -123,8 +123,6 @@ namespace UnityEngine.Funny.Rendering {
         /// </summary>
         internal static void RenderSingleCameraInternal(ScriptableRenderContext renderContext, Camera camera) {
             FunnyAdditionalCameraData additionalCameraData = null;
-
-            //RenderSingleCamera(renderContext, )
             InitializeCameraData(camera, additionalCameraData, true, out var cameraData);
             RenderSingleCamera(renderContext, ref cameraData);
 

@@ -617,6 +617,7 @@ namespace UnityEngine.Rendering.Universal {
         /// <param name="depthTarget">Camera depth target. Pass BuiltinRenderTextureType.CameraTarget if color has depth or rendering to backbuffer.</param>
         [Obsolete("Use RTHandles for colorTarget and depthTarget")]
         public void ConfigureCameraTarget(RenderTargetIdentifier colorTarget, RenderTargetIdentifier depthTarget) {
+            //Debug.Log("c1");
             m_CameraColorTarget = new RTHandleRenderTargetIdentifierCompat { fallback = colorTarget };
             m_CameraDepthTarget = new RTHandleRenderTargetIdentifierCompat { fallback = depthTarget };
         }
@@ -627,18 +628,21 @@ namespace UnityEngine.Rendering.Universal {
         /// <param name="colorTarget">Camera color target. Pass k_CameraTarget if rendering to backbuffer.</param>
         /// <param name="depthTarget">Camera depth target. Pass k_CameraTarget if color has depth or rendering to backbuffer.</param>
         public void ConfigureCameraTarget(RTHandle colorTarget, RTHandle depthTarget) {
+            //Debug.Log("c2");
             m_CameraColorTarget = new RTHandleRenderTargetIdentifierCompat { handle = colorTarget };
             m_CameraDepthTarget = new RTHandleRenderTargetIdentifierCompat { handle = depthTarget };
         }
 
         [Obsolete("Use RTHandles for colorTarget, depthTarget and resolveTarget")]
         internal void ConfigureCameraTarget(RenderTargetIdentifier colorTarget, RenderTargetIdentifier depthTarget, RenderTargetIdentifier resolveTarget) {
+            //Debug.Log("c3");
             m_CameraColorTarget = new RTHandleRenderTargetIdentifierCompat { fallback = colorTarget };
             m_CameraDepthTarget = new RTHandleRenderTargetIdentifierCompat { fallback = depthTarget };
             m_CameraResolveTarget = new RTHandleRenderTargetIdentifierCompat { fallback = resolveTarget };
         }
 
         internal void ConfigureCameraTarget(RTHandle colorTarget, RTHandle depthTarget, RTHandle resolveTarget) {
+            //Debug.Log("c4");
             m_CameraColorTarget = new RTHandleRenderTargetIdentifierCompat { handle = colorTarget };
             m_CameraDepthTarget = new RTHandleRenderTargetIdentifierCompat { handle = depthTarget };
             m_CameraResolveTarget = new RTHandleRenderTargetIdentifierCompat { handle = resolveTarget };
@@ -647,11 +651,13 @@ namespace UnityEngine.Rendering.Universal {
         // This should be removed when early camera color target assignment is removed.
         [Obsolete("Use RTHandle for colorTarget")]
         internal void ConfigureCameraColorTarget(RenderTargetIdentifier colorTarget) {
+            //Debug.Log("c5");
             m_CameraColorTarget = new RTHandleRenderTargetIdentifierCompat { fallback = colorTarget };
         }
 
         // This should be removed when early camera color target assignment is removed.
         internal void ConfigureCameraColorTarget(RTHandle colorTarget) {
+            // miles, 第一次 handle 初始化
             m_CameraColorTarget = new RTHandleRenderTargetIdentifierCompat { handle = colorTarget };
         }
 
@@ -1242,7 +1248,7 @@ namespace UnityEngine.Rendering.Universal {
 
             m_FirstTimeCameraColorTargetIsBound = cameraType == CameraRenderType.Base;
             m_FirstTimeCameraDepthTargetIsBound = true;
-
+            //Debug.Log("c7");
             m_CameraColorTarget = new RTHandleRenderTargetIdentifierCompat { fallback = BuiltinRenderTextureType.CameraTarget };
             m_CameraDepthTarget = new RTHandleRenderTargetIdentifierCompat { fallback = BuiltinRenderTextureType.CameraTarget };
         }

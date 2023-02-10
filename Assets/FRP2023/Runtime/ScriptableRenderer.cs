@@ -7,7 +7,7 @@ using Unity.Collections;
 
 namespace UnityEngine.Funny.Rendering {
     /// <summary>
-    /// 渲染接口 renderer 的抽象，partial，摄影机使用渲染接口实现具体的渲染流程
+    /// 渲染管线的主逻辑，主要方法是 execute，用于执行已经添加在队列中的 passes
     /// </summary>
     public abstract partial class ScriptableRenderer : IDisposable {
         List<ScriptableRenderPass> m_ActiveRenderPassQueue = new List<ScriptableRenderPass>(32);
@@ -17,6 +17,8 @@ namespace UnityEngine.Funny.Rendering {
         /// </summary>
         bool m_IsPipelineExecuting = false;
 
+        /// <summary>
+        /// 表示当前摄影机 color buffer，注意，即使当 cameraTargetTexture 为 null 时，cameraColorTargetHandle 也不会为 null
         RTHandle m_CameraColorTargetHandle;
         RTHandle m_CameraDepthTargetHandle;
         RTHandle m_CameraResolveTargetHandle;
@@ -250,6 +252,12 @@ namespace UnityEngine.Funny.Rendering {
             m_CameraDepthTargetHandle = depthTargetHandle;
         }
 
+        /// <summary>
+        /// 配置渲染目标，颜色
+        /// </summary>
+        public void ConfigureCameraColorTarget(RTHandle colorTargetHandle) {
+            m_CameraColorTargetHandle = colorTargetHandle;
+        }
 
         /// <summary>
         /// 渲染结束后清空 passes 队列

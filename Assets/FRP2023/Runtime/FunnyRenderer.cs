@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 
 namespace UnityEngine.Funny.Rendering {
     /// <summary>
-    /// frp 的默认渲染逻辑
+    /// frp 的 pass 逻辑，主要函数是 setup，用于定于与添加需要渲染的所有 pass
     /// </summary>
     public sealed partial class FunnyRenderer : ScriptableRenderer {
         // 需要渲染 skybox pass
@@ -17,6 +17,10 @@ namespace UnityEngine.Funny.Rendering {
         public FunnyRenderer(FunnyRendererData FunnyRendererData) : base(FunnyRendererData) {
             m_DrawSkyboxPass = new DrawSkyboxPass(RenderPassEvent.BeforeRenderingSkybox);
             m_DrawOpaqueForwardPass = new DrawObjectsPass(true, RenderPassEvent.BeforeRenderingOpaques);
+        }
+
+        void CreateCameraRenderTarget(ScriptableRenderContext renderContext, ref RenderTextureDescriptor descriptor, CommandBuffer commandBuffer, ref CameraData cameraData) {
+            //ConfigureCameraColorTarget());
         }
 
         /// <summary>

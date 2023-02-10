@@ -653,8 +653,10 @@ namespace UnityEngine.Rendering.Universal {
                 }
 
                 // Doesn't create texture for Overlay cameras as they are already overlaying on top of created textures.
-                if (intermediateRenderTexture)
+                if (intermediateRenderTexture) {
+                    // miles, 这次是初始化 cameraTargetHandle 的地方
                     CreateCameraRenderTarget(context, ref cameraTargetDescriptor, useDepthPriming, cmd, ref cameraData);
+                }
 
                 m_ActiveCameraColorAttachment = createColorTexture ? m_ColorBufferSystem.PeekBackBuffer() : m_XRTargetHandleAlias;
                 m_ActiveCameraDepthAttachment = createDepthTexture ? m_CameraDepthAttachment : m_XRTargetHandleAlias;
