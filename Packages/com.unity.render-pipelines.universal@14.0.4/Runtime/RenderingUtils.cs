@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine.Experimental.Rendering;
 
-namespace UnityEngine.Rendering.Universal
-{
+namespace UnityEngine.Rendering.Universal {
     /// <summary>
     /// Contains properties and helper functions that you can use when rendering.
     /// </summary>
-    public static class RenderingUtils
-    {
+    public static class RenderingUtils {
         static List<ShaderTagId> m_LegacyShaderPassNames = new List<ShaderTagId>
         {
             new ShaderTagId("Always"),
@@ -21,10 +19,8 @@ namespace UnityEngine.Rendering.Universal
         };
 
         static AttachmentDescriptor s_EmptyAttachment = new AttachmentDescriptor(GraphicsFormat.None);
-        internal static AttachmentDescriptor emptyAttachment
-        {
-            get
-            {
+        internal static AttachmentDescriptor emptyAttachment {
+            get {
                 return s_EmptyAttachment;
             }
         }
@@ -35,10 +31,8 @@ namespace UnityEngine.Rendering.Universal
         /// Returns a mesh that you can use with <see cref="CommandBuffer.DrawMesh(Mesh, Matrix4x4, Material)"/> to render full-screen effects.
         /// </summary>
         [Obsolete("Use Blitter.BlitCameraTexture instead of CommandBuffer.DrawMesh(fullscreenMesh, ...)")]
-        public static Mesh fullscreenMesh
-        {
-            get
-            {
+        public static Mesh fullscreenMesh {
+            get {
                 if (s_FullscreenMesh != null)
                     return s_FullscreenMesh;
 
@@ -68,12 +62,10 @@ namespace UnityEngine.Rendering.Universal
             }
         }
 
-        internal static bool useStructuredBuffer
-        {
+        internal static bool useStructuredBuffer {
             // There are some performance issues with StructuredBuffers in some platforms.
             // We fallback to UBO in those cases.
-            get
-            {
+            get {
                 // TODO: For now disabling SSBO until figure out Vulkan binding issues.
                 // When enabling this also enable USE_STRUCTURED_BUFFER_FOR_LIGHT_DATA in shader side in Input.hlsl
                 return false;
@@ -86,27 +78,21 @@ namespace UnityEngine.Rendering.Universal
             }
         }
 
-        internal static bool SupportsLightLayers(GraphicsDeviceType type)
-        {
+        internal static bool SupportsLightLayers(GraphicsDeviceType type) {
             // GLES2 does not support bitwise operations.
             return type != GraphicsDeviceType.OpenGLES2;
         }
 
         static Material s_ErrorMaterial;
-        static Material errorMaterial
-        {
-            get
-            {
-                if (s_ErrorMaterial == null)
-                {
+        static Material errorMaterial {
+            get {
+                if (s_ErrorMaterial == null) {
                     // TODO: When importing project, AssetPreviewUpdater::CreatePreviewForAsset will be called multiple times.
                     // This might be in a point that some resources required for the pipeline are not finished importing yet.
                     // Proper fix is to add a fence on asset import.
-                    try
-                    {
+                    try {
                         s_ErrorMaterial = new Material(Shader.Find("Hidden/Universal Render Pipeline/FallbackError"));
-                    }
-                    catch { }
+                    } catch { }
                 }
 
                 return s_ErrorMaterial;
@@ -122,15 +108,13 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="viewMatrix">View matrix to be set.</param>
         /// <param name="projectionMatrix">Projection matrix to be set.</param>
         /// <param name="setInverseMatrices">Set this to true if you also need to set inverse camera matrices.</param>
-        public static void SetViewAndProjectionMatrices(CommandBuffer cmd, Matrix4x4 viewMatrix, Matrix4x4 projectionMatrix, bool setInverseMatrices)
-        {
+        public static void SetViewAndProjectionMatrices(CommandBuffer cmd, Matrix4x4 viewMatrix, Matrix4x4 projectionMatrix, bool setInverseMatrices) {
             Matrix4x4 viewAndProjectionMatrix = projectionMatrix * viewMatrix;
             cmd.SetGlobalMatrix(ShaderPropertyId.viewMatrix, viewMatrix);
             cmd.SetGlobalMatrix(ShaderPropertyId.projectionMatrix, projectionMatrix);
             cmd.SetGlobalMatrix(ShaderPropertyId.viewAndProjectionMatrix, viewAndProjectionMatrix);
 
-            if (setInverseMatrices)
-            {
+            if (setInverseMatrices) {
                 Matrix4x4 inverseViewMatrix = Matrix4x4.Inverse(viewMatrix);
                 Matrix4x4 inverseProjectionMatrix = Matrix4x4.Inverse(projectionMatrix);
                 Matrix4x4 inverseViewProjection = inverseViewMatrix * inverseProjectionMatrix;
@@ -140,8 +124,7 @@ namespace UnityEngine.Rendering.Universal
             }
         }
 
-        internal static void SetScaleBiasRt(CommandBuffer cmd, in RenderingData renderingData)
-        {
+        internal static void SetScaleBiasRt(CommandBuffer cmd, in RenderingData renderingData) {
             var renderer = renderingData.cameraData.renderer;
             // SetRenderTarget has logic to flip projection matrix when rendering to render texture. Flip the uv to account for that case.
             CameraData cameraData = renderingData.cameraData;
@@ -163,8 +146,7 @@ namespace UnityEngine.Rendering.Universal
             ClearFlag clearFlag,
             Color clearColor,
             Material material,
-            int passIndex = 0)
-        {
+            int passIndex = 0) {
             Vector2 viewportScale = source.useScaling ? new Vector2(source.rtHandleProperties.rtHandleScale.x, source.rtHandleProperties.rtHandleScale.y) : Vector2.one;
             CoreUtils.SetRenderTarget(cmd, destination, loadAction, storeAction, ClearFlag.None, Color.clear);
             cmd.SetViewport(viewport);
@@ -183,8 +165,7 @@ namespace UnityEngine.Rendering.Universal
             ClearFlag clearFlag,
             Color clearColor,
             Material material,
-            int passIndex = 0)
-        {
+            int passIndex = 0) {
             Vector2 viewportScale = source.useScaling ? new Vector2(source.rtHandleProperties.rtHandleScale.x, source.rtHandleProperties.rtHandleScale.y) : Vector2.one;
             CoreUtils.SetRenderTarget(cmd,
                 destinationColor, colorLoadAction, colorStoreAction,
@@ -201,12 +182,11 @@ namespace UnityEngine.Rendering.Universal
             RTHandle destination,
             RenderBufferLoadAction loadAction,
             RenderBufferStoreAction storeAction,
-            Material material, int passIndex)
-        {
+            Material material, int passIndex) {
             bool isRenderToBackBufferTarget = !cameraData.isSceneViewCamera;
 #if ENABLE_VR && ENABLE_XR_MODULE
-                if (cameraData.xr.enabled)
-                    isRenderToBackBufferTarget = new RenderTargetIdentifier(destination.nameID, 0, CubemapFace.Unknown, -1) == new RenderTargetIdentifier(cameraData.xr.renderTarget, 0, CubemapFace.Unknown, -1);
+            if (cameraData.xr.enabled)
+                isRenderToBackBufferTarget = new RenderTargetIdentifier(destination.nameID, 0, CubemapFace.Unknown, -1) == new RenderTargetIdentifier(cameraData.xr.renderTarget, 0, CubemapFace.Unknown, -1);
 #endif
 
             Vector2 viewportScale = source.useScaling ? new Vector2(source.rtHandleProperties.rtHandleScale.x, source.rtHandleProperties.rtHandleScale.y) : Vector2.one;
@@ -220,16 +200,14 @@ namespace UnityEngine.Rendering.Universal
             if (isRenderToBackBufferTarget)
                 cmd.SetViewport(cameraData.pixelRect);
 
-            if (cameraData.isSceneViewCamera)
-            {
+            if (cameraData.isSceneViewCamera) {
                 cmd.SetGlobalTexture("_BlitTexture", source);
                 // This set render target is necessary so we change the LOAD state to DontCare.
                 cmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget,
                     loadAction, storeAction, // color
                     RenderBufferLoadAction.DontCare, RenderBufferStoreAction.DontCare); // depth
                 cmd.Blit(source.nameID, destination.nameID);
-            }
-            else if (source.rt == null)
+            } else if (source.renderTexture == null)
                 Blitter.BlitTexture(cmd, source.nameID, scaleBias, material, passIndex);  // Obsolete usage of RTHandle aliasing a RenderTargetIdentifier
             else
                 Blitter.BlitTexture(cmd, source, scaleBias, material, passIndex);
@@ -238,8 +216,7 @@ namespace UnityEngine.Rendering.Universal
         // This is used to render materials that contain built-in shader passes not compatible with URP.
         // It will render those legacy passes with error/pink shader.
         [Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR")]
-        internal static void RenderObjectsWithError(ScriptableRenderContext context, ref CullingResults cullResults, Camera camera, FilteringSettings filterSettings, SortingCriteria sortFlags)
-        {
+        internal static void RenderObjectsWithError(ScriptableRenderContext context, ref CullingResults cullResults, Camera camera, FilteringSettings filterSettings, SortingCriteria sortFlags) {
             // TODO: When importing project, AssetPreviewUpdater::CreatePreviewForAsset will be called multiple times.
             // This might be in a point that some resources required for the pipeline are not finished importing yet.
             // Proper fix is to add a fence on asset import.
@@ -247,8 +224,7 @@ namespace UnityEngine.Rendering.Universal
                 return;
 
             SortingSettings sortingSettings = new SortingSettings(camera) { criteria = sortFlags };
-            DrawingSettings errorSettings = new DrawingSettings(m_LegacyShaderPassNames[0], sortingSettings)
-            {
+            DrawingSettings errorSettings = new DrawingSettings(m_LegacyShaderPassNames[0], sortingSettings) {
                 perObjectData = PerObjectData.None,
                 overrideMaterial = errorMaterial,
                 overrideMaterialPassIndex = 0
@@ -263,8 +239,7 @@ namespace UnityEngine.Rendering.Universal
         static Dictionary<RenderTextureFormat, bool> m_RenderTextureFormatSupport = new Dictionary<RenderTextureFormat, bool>();
         static Dictionary<GraphicsFormat, Dictionary<FormatUsage, bool>> m_GraphicsFormatSupport = new Dictionary<GraphicsFormat, Dictionary<FormatUsage, bool>>();
 
-        internal static void ClearSystemInfoCache()
-        {
+        internal static void ClearSystemInfoCache() {
             m_RenderTextureFormatSupport.Clear();
             m_GraphicsFormatSupport.Clear();
         }
@@ -275,10 +250,8 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="format">The format to look up.</param>
         /// <returns>Returns true if the graphics card supports the given <c>RenderTextureFormat</c></returns>
-        public static bool SupportsRenderTextureFormat(RenderTextureFormat format)
-        {
-            if (!m_RenderTextureFormatSupport.TryGetValue(format, out var support))
-            {
+        public static bool SupportsRenderTextureFormat(RenderTextureFormat format) {
+            if (!m_RenderTextureFormatSupport.TryGetValue(format, out var support)) {
                 support = SystemInfo.SupportsRenderTextureFormat(format);
                 m_RenderTextureFormatSupport.Add(format, support);
             }
@@ -293,20 +266,15 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="format">The format to look up.</param>
         /// <param name="usage">The format usage to look up.</param>
         /// <returns>Returns true if the graphics card supports the given <c>GraphicsFormat</c></returns>
-        public static bool SupportsGraphicsFormat(GraphicsFormat format, FormatUsage usage)
-        {
+        public static bool SupportsGraphicsFormat(GraphicsFormat format, FormatUsage usage) {
             bool support = false;
-            if (!m_GraphicsFormatSupport.TryGetValue(format, out var uses))
-            {
+            if (!m_GraphicsFormatSupport.TryGetValue(format, out var uses)) {
                 uses = new Dictionary<FormatUsage, bool>();
                 support = SystemInfo.IsFormatSupported(format, usage);
                 uses.Add(usage, support);
                 m_GraphicsFormatSupport.Add(format, uses);
-            }
-            else
-            {
-                if (!uses.TryGetValue(usage, out support))
-                {
+            } else {
+                if (!uses.TryGetValue(usage, out support)) {
                     support = SystemInfo.IsFormatSupported(format, usage);
                     uses.Add(usage, support);
                 }
@@ -320,11 +288,9 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="colorBuffers"></param>
         /// <returns></returns>
-        internal static int GetLastValidColorBufferIndex(RenderTargetIdentifier[] colorBuffers)
-        {
+        internal static int GetLastValidColorBufferIndex(RenderTargetIdentifier[] colorBuffers) {
             int i = colorBuffers.Length - 1;
-            for (; i >= 0; --i)
-            {
+            for (; i >= 0; --i) {
                 if (colorBuffers[i] != 0)
                     break;
             }
@@ -337,13 +303,10 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="colorBuffers"></param>
         /// <returns></returns>
         [Obsolete("Use RTHandles for colorBuffers")]
-        internal static uint GetValidColorBufferCount(RenderTargetIdentifier[] colorBuffers)
-        {
+        internal static uint GetValidColorBufferCount(RenderTargetIdentifier[] colorBuffers) {
             uint nonNullColorBuffers = 0;
-            if (colorBuffers != null)
-            {
-                foreach (var identifier in colorBuffers)
-                {
+            if (colorBuffers != null) {
+                foreach (var identifier in colorBuffers) {
                     if (identifier != 0)
                         ++nonNullColorBuffers;
                 }
@@ -356,13 +319,10 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="colorBuffers"></param>
         /// <returns></returns>
-        internal static uint GetValidColorBufferCount(RTHandle[] colorBuffers)
-        {
+        internal static uint GetValidColorBufferCount(RTHandle[] colorBuffers) {
             uint nonNullColorBuffers = 0;
-            if (colorBuffers != null)
-            {
-                foreach (var identifier in colorBuffers)
-                {
+            if (colorBuffers != null) {
+                foreach (var identifier in colorBuffers) {
                     if (identifier != null && identifier.nameID != 0)
                         ++nonNullColorBuffers;
                 }
@@ -376,8 +336,7 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="colorBuffers"></param>
         /// <returns></returns>
         [Obsolete("Use RTHandles for colorBuffers")]
-        internal static bool IsMRT(RenderTargetIdentifier[] colorBuffers)
-        {
+        internal static bool IsMRT(RenderTargetIdentifier[] colorBuffers) {
             return GetValidColorBufferCount(colorBuffers) > 1;
         }
 
@@ -386,8 +345,7 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="colorBuffers"></param>
         /// <returns></returns>
-        internal static bool IsMRT(RTHandle[] colorBuffers)
-        {
+        internal static bool IsMRT(RTHandle[] colorBuffers) {
             return GetValidColorBufferCount(colorBuffers) > 1;
         }
 
@@ -397,10 +355,8 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="source"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        internal static bool Contains(RenderTargetIdentifier[] source, RenderTargetIdentifier value)
-        {
-            foreach (var identifier in source)
-            {
+        internal static bool Contains(RenderTargetIdentifier[] source, RenderTargetIdentifier value) {
+            foreach (var identifier in source) {
                 if (identifier == value)
                     return true;
             }
@@ -413,10 +369,8 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="source"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        internal static int IndexOf(RenderTargetIdentifier[] source, RenderTargetIdentifier value)
-        {
-            for (int i = 0; i < source.Length; ++i)
-            {
+        internal static int IndexOf(RenderTargetIdentifier[] source, RenderTargetIdentifier value) {
+            for (int i = 0; i < source.Length; ++i) {
                 if (source[i] == value)
                     return i;
             }
@@ -429,11 +383,9 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="source"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        internal static uint CountDistinct(RenderTargetIdentifier[] source, RenderTargetIdentifier value)
-        {
+        internal static uint CountDistinct(RenderTargetIdentifier[] source, RenderTargetIdentifier value) {
             uint count = 0;
-            for (int i = 0; i < source.Length; ++i)
-            {
+            for (int i = 0; i < source.Length; ++i) {
                 if (source[i] != value && source[i] != 0)
                     ++count;
             }
@@ -445,10 +397,8 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        internal static int LastValid(RenderTargetIdentifier[] source)
-        {
-            for (int i = source.Length - 1; i >= 0; --i)
-            {
+        internal static int LastValid(RenderTargetIdentifier[] source) {
+            for (int i = source.Length - 1; i >= 0; --i) {
                 if (source[i] != 0)
                     return i;
             }
@@ -461,8 +411,7 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        internal static bool Contains(ClearFlag a, ClearFlag b)
-        {
+        internal static bool Contains(ClearFlag a, ClearFlag b) {
             return (a & b) == b;
         }
 
@@ -472,8 +421,7 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        internal static bool SequenceEqual(RenderTargetIdentifier[] left, RenderTargetIdentifier[] right)
-        {
+        internal static bool SequenceEqual(RenderTargetIdentifier[] left, RenderTargetIdentifier[] right) {
             if (left.Length != right.Length)
                 return false;
 
@@ -484,8 +432,7 @@ namespace UnityEngine.Rendering.Universal
             return true;
         }
 
-        internal static bool MultisampleDepthResolveSupported()
-        {
+        internal static bool MultisampleDepthResolveSupported() {
             // Temporarily disabling depth resolve a driver bug on OSX when using some AMD graphics cards. Temporarily disabling depth resolve on that platform
             // TODO: re-enable once the issue is investigated/fixed
             if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.OSXPlayer)
@@ -517,29 +464,28 @@ namespace UnityEngine.Rendering.Universal
             int anisoLevel,
             float mipMapBias,
             string name,
-            bool scaled)
-        {
-            if (handle == null || handle.rt == null)
+            bool scaled) {
+            if (handle == null || handle.renderTexture == null)
                 return true;
             if (handle.useScaling != scaled)
                 return true;
-            if (!scaled && (handle.rt.width != descriptor.width || handle.rt.height != descriptor.height))
+            if (!scaled && (handle.renderTexture.width != descriptor.width || handle.renderTexture.height != descriptor.height))
                 return true;
             return
-                handle.rt.descriptor.depthBufferBits != descriptor.depthBufferBits ||
-                (handle.rt.descriptor.depthBufferBits == (int)DepthBits.None && !isShadowMap && handle.rt.descriptor.graphicsFormat != descriptor.graphicsFormat) ||
-                handle.rt.descriptor.dimension != descriptor.dimension ||
-                handle.rt.descriptor.enableRandomWrite != descriptor.enableRandomWrite ||
-                handle.rt.descriptor.useMipMap != descriptor.useMipMap ||
-                handle.rt.descriptor.autoGenerateMips != descriptor.autoGenerateMips ||
-                handle.rt.descriptor.msaaSamples != descriptor.msaaSamples ||
-                handle.rt.descriptor.bindMS != descriptor.bindMS ||
-                handle.rt.descriptor.useDynamicScale != descriptor.useDynamicScale ||
-                handle.rt.descriptor.memoryless != descriptor.memoryless ||
-                handle.rt.filterMode != filterMode ||
-                handle.rt.wrapMode != wrapMode ||
-                handle.rt.anisoLevel != anisoLevel ||
-                handle.rt.mipMapBias != mipMapBias ||
+                handle.renderTexture.descriptor.depthBufferBits != descriptor.depthBufferBits ||
+                (handle.renderTexture.descriptor.depthBufferBits == (int)DepthBits.None && !isShadowMap && handle.renderTexture.descriptor.graphicsFormat != descriptor.graphicsFormat) ||
+                handle.renderTexture.descriptor.dimension != descriptor.dimension ||
+                handle.renderTexture.descriptor.enableRandomWrite != descriptor.enableRandomWrite ||
+                handle.renderTexture.descriptor.useMipMap != descriptor.useMipMap ||
+                handle.renderTexture.descriptor.autoGenerateMips != descriptor.autoGenerateMips ||
+                handle.renderTexture.descriptor.msaaSamples != descriptor.msaaSamples ||
+                handle.renderTexture.descriptor.bindMS != descriptor.bindMS ||
+                handle.renderTexture.descriptor.useDynamicScale != descriptor.useDynamicScale ||
+                handle.renderTexture.descriptor.memoryless != descriptor.memoryless ||
+                handle.renderTexture.filterMode != filterMode ||
+                handle.renderTexture.wrapMode != wrapMode ||
+                handle.renderTexture.anisoLevel != anisoLevel ||
+                handle.renderTexture.mipMapBias != mipMapBias ||
                 handle.name != name;
         }
 
@@ -563,10 +509,8 @@ namespace UnityEngine.Rendering.Universal
             bool isShadowMap = false,
             int anisoLevel = 1,
             float mipMapBias = 0,
-            string name = "")
-        {
-            if (RTHandleNeedsReAlloc(handle, descriptor, filterMode, wrapMode, isShadowMap, anisoLevel, mipMapBias, name, false))
-            {
+            string name = "") {
+            if (RTHandleNeedsReAlloc(handle, descriptor, filterMode, wrapMode, isShadowMap, anisoLevel, mipMapBias, name, false)) {
                 handle?.Release();
                 handle = RTHandles.Alloc(descriptor, filterMode, wrapMode, isShadowMap, anisoLevel, mipMapBias, name);
                 return true;
@@ -596,11 +540,9 @@ namespace UnityEngine.Rendering.Universal
             bool isShadowMap = false,
             int anisoLevel = 1,
             float mipMapBias = 0,
-            string name = "")
-        {
+            string name = "") {
             var usingConstantScale = handle != null && handle.useScaling && handle.scaleFactor == scaleFactor;
-            if (!usingConstantScale || RTHandleNeedsReAlloc(handle, descriptor, filterMode, wrapMode, isShadowMap, anisoLevel, mipMapBias, name, true))
-            {
+            if (!usingConstantScale || RTHandleNeedsReAlloc(handle, descriptor, filterMode, wrapMode, isShadowMap, anisoLevel, mipMapBias, name, true)) {
                 handle?.Release();
                 handle = RTHandles.Alloc(scaleFactor, descriptor, filterMode, wrapMode, isShadowMap, anisoLevel, mipMapBias, name);
                 return true;
@@ -630,11 +572,9 @@ namespace UnityEngine.Rendering.Universal
             bool isShadowMap = false,
             int anisoLevel = 1,
             float mipMapBias = 0,
-            string name = "")
-        {
+            string name = "") {
             var usingScaleFunction = handle != null && handle.useScaling && handle.scaleFactor == Vector2.zero;
-            if (!usingScaleFunction || RTHandleNeedsReAlloc(handle, descriptor, filterMode, wrapMode, isShadowMap, anisoLevel, mipMapBias, name, true))
-            {
+            if (!usingScaleFunction || RTHandleNeedsReAlloc(handle, descriptor, filterMode, wrapMode, isShadowMap, anisoLevel, mipMapBias, name, true)) {
                 handle?.Release();
                 handle = RTHandles.Alloc(scaleFunc, descriptor, filterMode, wrapMode, isShadowMap, anisoLevel, mipMapBias, name);
                 return true;
@@ -651,12 +591,10 @@ namespace UnityEngine.Rendering.Universal
         /// <param name="sortingCriteria">Criteria to sort objects being rendered.</param>
         /// <returns></returns>
         /// <seealso cref="DrawingSettings"/>
-        static public DrawingSettings CreateDrawingSettings(ShaderTagId shaderTagId, ref RenderingData renderingData, SortingCriteria sortingCriteria)
-        {
+        static public DrawingSettings CreateDrawingSettings(ShaderTagId shaderTagId, ref RenderingData renderingData, SortingCriteria sortingCriteria) {
             Camera camera = renderingData.cameraData.camera;
             SortingSettings sortingSettings = new SortingSettings(camera) { criteria = sortingCriteria };
-            DrawingSettings settings = new DrawingSettings(shaderTagId, sortingSettings)
-            {
+            DrawingSettings settings = new DrawingSettings(shaderTagId, sortingSettings) {
                 perObjectData = renderingData.perObjectData,
                 mainLightIndex = renderingData.lightData.mainLightIndex,
                 enableDynamicBatching = renderingData.supportsDynamicBatching,
@@ -676,10 +614,8 @@ namespace UnityEngine.Rendering.Universal
         /// <returns></returns>
         /// <seealso cref="DrawingSettings"/>
         static public DrawingSettings CreateDrawingSettings(List<ShaderTagId> shaderTagIdList,
-            ref RenderingData renderingData, SortingCriteria sortingCriteria)
-        {
-            if (shaderTagIdList == null || shaderTagIdList.Count == 0)
-            {
+            ref RenderingData renderingData, SortingCriteria sortingCriteria) {
+            if (shaderTagIdList == null || shaderTagIdList.Count == 0) {
                 Debug.LogWarning("ShaderTagId list is invalid. DrawingSettings is created with default pipeline ShaderTagId");
                 return CreateDrawingSettings(new ShaderTagId("UniversalPipeline"), ref renderingData, sortingCriteria);
             }

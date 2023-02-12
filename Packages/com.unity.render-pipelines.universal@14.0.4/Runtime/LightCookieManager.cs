@@ -959,7 +959,7 @@ namespace UnityEngine.Rendering.Universal
             Assertions.Assert.IsTrue(m_AdditionalLightsCookieShaderData != null);
 
             cmd.SetGlobalTexture(ShaderProperty.additionalLightsCookieAtlasTexture, m_AdditionalLightsCookieAtlas.AtlasTexture);
-            cmd.SetGlobalFloat(ShaderProperty.additionalLightsCookieAtlasTextureFormat, (float)GetLightCookieShaderFormat(m_AdditionalLightsCookieAtlas.AtlasTexture.rt.graphicsFormat));
+            cmd.SetGlobalFloat(ShaderProperty.additionalLightsCookieAtlasTextureFormat, (float)GetLightCookieShaderFormat(m_AdditionalLightsCookieAtlas.AtlasTexture.renderTexture.graphicsFormat));
 
             // Resize and clear visible light to shader data mapping
             if (m_VisibleLightIndexToShaderDataIndex.Length < lightData.visibleLights.Length)

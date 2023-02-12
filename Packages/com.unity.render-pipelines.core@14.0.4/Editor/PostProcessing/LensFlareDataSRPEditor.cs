@@ -658,7 +658,7 @@ namespace UnityEditor.Rendering
         void RenderToTexture2D(ref Texture2D computedTexture, bool clear = true)
         {
             RenderTexture oldActive = RenderTexture.active;
-            RenderTexture.active = m_PreviewTexture.rt;
+            RenderTexture.active = m_PreviewTexture.renderTexture;
 
             if (clear)
                 GL.Clear(false, true, Color.black);

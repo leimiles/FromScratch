@@ -85,7 +85,7 @@ namespace UnityEngine.Rendering.Universal
             if (m_Renderer2DData.cameraSortingLayerDownsamplingMethod != Downsampling._4xBox)
             {
                 copyMaterial = m_BlitMaterial;
-                passIndex = colorAttachmentHandle.rt.filterMode == FilterMode.Bilinear ? 1 : 0;
+                passIndex = colorAttachmentHandle.renderTexture.filterMode == FilterMode.Bilinear ? 1 : 0;
             }
 
             Blitter.BlitCameraTexture(cmd, colorAttachmentHandle, m_Renderer2DData.cameraSortingLayerRenderTarget, RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store, copyMaterial, passIndex);

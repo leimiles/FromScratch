@@ -928,7 +928,7 @@ namespace UnityEngine.Rendering
             m_AutoSizedRTs.CopyTo(m_AutoSizedRTsArray);
             for (int i = 0, c = m_AutoSizedRTsArray.Length; i < c; ++i)
             {
-                var rt = m_AutoSizedRTsArray[i].rt;
+                var rt = m_AutoSizedRTsArray[i].renderTexture;
                 result = string.Format("{0}\nRT ({1})\t Format: {2} W: {3} H {4}\n", result, i, rt.format, rt.width, rt.height);
             }
 

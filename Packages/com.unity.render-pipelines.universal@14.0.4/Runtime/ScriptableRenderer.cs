@@ -1638,7 +1638,7 @@ namespace UnityEngine.Rendering.Universal {
                 RenderBufferLoadAction.DontCare : RenderBufferLoadAction.Load;
 
             // Storing depth and color in the same RT should only be possible with alias RTHandles, those that create rendertargets with RTAlloc()
-            if (colorAttachment.rt == null && depthAttachment.rt == null && depthAttachment.nameID == k_CameraTarget.nameID)
+            if (colorAttachment.renderTexture == null && depthAttachment.renderTexture == null && depthAttachment.nameID == k_CameraTarget.nameID)
                 SetRenderTarget(cmd, colorAttachment, colorLoadAction, RenderBufferStoreAction.Store,
                     colorAttachment, depthLoadAction, RenderBufferStoreAction.Store, clearFlag, clearColor);
             else

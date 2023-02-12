@@ -520,7 +520,7 @@ namespace UnityEngine.Rendering.Universal
                 if (IsAfterOpaquePass(ref pass))
                     Blitter.BlitCameraTexture(cmd, baseMap, renderer.cameraColorTargetHandle, RenderBufferLoadAction.Load, RenderBufferStoreAction.Store, mat, (int)pass);
 
-                else if (baseMap.rt == null)
+                else if (baseMap.renderTexture == null)
                 {
                     // Obsolete usage of RTHandle aliasing a RenderTargetIdentifier
                     Vector2 viewportScale = baseMap.useScaling ? new Vector2(baseMap.rtHandleProperties.rtHandleScale.x, baseMap.rtHandleProperties.rtHandleScale.y) : Vector2.one;

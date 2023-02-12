@@ -246,7 +246,7 @@ namespace UnityEngine.Rendering
         private static int FixupDepthSlice(int depthSlice, RTHandle buffer)
         {
             // buffer.rt can be null in case the RTHandle is constructed from a RenderTextureIdentifier.
-            if (depthSlice == -1 && buffer.rt?.dimension == TextureDimension.Cube)
+            if (depthSlice == -1 && buffer.renderTexture?.dimension == TextureDimension.Cube)
                 depthSlice = 0;
 
             return depthSlice;
@@ -608,12 +608,12 @@ namespace UnityEngine.Rendering
         /// <param name="depthSlice">Depth slice that should be bound as a render texture if applicable.</param>
         public static void SetRenderTarget(CommandBuffer cmd, RTHandle colorBuffer, RTHandle depthBuffer, int miplevel = 0, CubemapFace cubemapFace = CubemapFace.Unknown, int depthSlice = -1)
         {
-            if (colorBuffer.rt != null && depthBuffer.rt != null)
+            if (colorBuffer.renderTexture != null && depthBuffer.renderTexture != null)
             {
-                int cw = colorBuffer.rt.width;
-                int ch = colorBuffer.rt.height;
-                int dw = depthBuffer.rt.width;
-                int dh = depthBuffer.rt.height;
+                int cw = colorBuffer.renderTexture.width;
+                int ch = colorBuffer.renderTexture.height;
+                int dw = depthBuffer.renderTexture.width;
+                int dh = depthBuffer.renderTexture.height;
 
                 Debug.Assert(cw == dw && ch == dh);
             }
@@ -633,12 +633,12 @@ namespace UnityEngine.Rendering
         /// <param name="depthSlice">Depth slice that should be bound as a render texture if applicable.</param>
         public static void SetRenderTarget(CommandBuffer cmd, RTHandle colorBuffer, RTHandle depthBuffer, ClearFlag clearFlag, int miplevel = 0, CubemapFace cubemapFace = CubemapFace.Unknown, int depthSlice = -1)
         {
-            if (colorBuffer.rt != null && depthBuffer.rt != null)
+            if (colorBuffer.renderTexture != null && depthBuffer.renderTexture != null)
             {
-                int cw = colorBuffer.rt.width;
-                int ch = colorBuffer.rt.height;
-                int dw = depthBuffer.rt.width;
-                int dh = depthBuffer.rt.height;
+                int cw = colorBuffer.renderTexture.width;
+                int ch = colorBuffer.renderTexture.height;
+                int dw = depthBuffer.renderTexture.width;
+                int dh = depthBuffer.renderTexture.height;
 
                 Debug.Assert(cw == dw && ch == dh);
             }
@@ -659,12 +659,12 @@ namespace UnityEngine.Rendering
         /// <param name="depthSlice">Depth slice that should be bound as a render texture if applicable.</param>
         public static void SetRenderTarget(CommandBuffer cmd, RTHandle colorBuffer, RTHandle depthBuffer, ClearFlag clearFlag, Color clearColor, int miplevel = 0, CubemapFace cubemapFace = CubemapFace.Unknown, int depthSlice = -1)
         {
-            if (colorBuffer.rt != null && depthBuffer.rt != null)
+            if (colorBuffer.renderTexture != null && depthBuffer.renderTexture != null)
             {
-                int cw = colorBuffer.rt.width;
-                int ch = colorBuffer.rt.height;
-                int dw = depthBuffer.rt.width;
-                int dh = depthBuffer.rt.height;
+                int cw = colorBuffer.renderTexture.width;
+                int ch = colorBuffer.renderTexture.height;
+                int dw = depthBuffer.renderTexture.width;
+                int dh = depthBuffer.renderTexture.height;
 
                 Debug.Assert(cw == dw && ch == dh);
             }
@@ -711,12 +711,12 @@ namespace UnityEngine.Rendering
             RTHandle depthBuffer, RenderBufferLoadAction depthLoadAction, RenderBufferStoreAction depthStoreAction,
             ClearFlag clearFlag, Color clearColor, int miplevel = 0, CubemapFace cubemapFace = CubemapFace.Unknown, int depthSlice = -1)
         {
-            if (colorBuffer.rt != null && depthBuffer.rt != null)
+            if (colorBuffer.renderTexture != null && depthBuffer.renderTexture != null)
             {
-                int cw = colorBuffer.rt.width;
-                int ch = colorBuffer.rt.height;
-                int dw = depthBuffer.rt.width;
-                int dh = depthBuffer.rt.height;
+                int cw = colorBuffer.renderTexture.width;
+                int ch = colorBuffer.renderTexture.height;
+                int dw = depthBuffer.renderTexture.width;
+                int dh = depthBuffer.renderTexture.height;
 
                 Debug.Assert(cw == dw && ch == dh);
             }

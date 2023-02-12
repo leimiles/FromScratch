@@ -395,12 +395,12 @@ namespace UnityEngine.Experimental.Rendering.RenderGraphModule
 
         protected override string GetResourceName(RTHandle res)
         {
-            return res.rt.name;
+            return res.renderTexture.name;
         }
 
         protected override long GetResourceSize(RTHandle res)
         {
-            return Profiling.Profiler.GetRuntimeMemorySizeLong(res.rt);
+            return Profiling.Profiler.GetRuntimeMemorySizeLong(res.renderTexture);
         }
 
         override protected string GetResourceTypeName()

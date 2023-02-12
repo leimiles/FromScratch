@@ -27,7 +27,7 @@ namespace UnityEngine.Rendering.Universal
             else
                 id = Shader.PropertyToID(rtHandle.name);
             rtid = rtHandle.nameID;
-            if (rtHandle.rt != null && id != rtid)
+            if (rtHandle.renderTexture != null && id != rtid)
                 id = -2;
         }
 

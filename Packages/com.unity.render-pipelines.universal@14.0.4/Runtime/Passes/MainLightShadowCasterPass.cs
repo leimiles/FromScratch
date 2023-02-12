@@ -198,7 +198,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             cmd.SetGlobalVector(MainLightShadowConstantBuffer._ShadowParams,
                 new Vector4(1, 0, 1, 0));
             cmd.SetGlobalVector(MainLightShadowConstantBuffer._ShadowmapSize,
-                new Vector4(1f / m_EmptyLightShadowmapTexture.rt.width, 1f / m_EmptyLightShadowmapTexture.rt.height, m_EmptyLightShadowmapTexture.rt.width, m_EmptyLightShadowmapTexture.rt.height));
+                new Vector4(1f / m_EmptyLightShadowmapTexture.renderTexture.width, 1f / m_EmptyLightShadowmapTexture.renderTexture.height, m_EmptyLightShadowmapTexture.renderTexture.width, m_EmptyLightShadowmapTexture.renderTexture.height));
             context.ExecuteCommandBuffer(cmd);
             cmd.Clear();
         }
@@ -329,7 +329,7 @@ namespace UnityEngine.Rendering.Universal.Internal
 
                 if (!m_CreateEmptyShadowmap)
                 {
-                    passData.shadowmapTexture = UniversalRenderer.CreateRenderGraphTexture(graph, m_MainLightShadowmapTexture.rt.descriptor, "Main Shadowmap", true, ShadowUtils.m_ForceShadowPointSampling ? FilterMode.Point : FilterMode.Bilinear);
+                    passData.shadowmapTexture = UniversalRenderer.CreateRenderGraphTexture(graph, m_MainLightShadowmapTexture.renderTexture.descriptor, "Main Shadowmap", true, ShadowUtils.m_ForceShadowPointSampling ? FilterMode.Point : FilterMode.Bilinear);
                     builder.UseDepthBuffer(passData.shadowmapTexture, DepthAccess.Write);
                 }
 

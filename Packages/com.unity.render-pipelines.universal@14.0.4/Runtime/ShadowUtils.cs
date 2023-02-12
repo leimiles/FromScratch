@@ -410,12 +410,12 @@ namespace UnityEngine.Rendering.Universal
             var descriptor = GetTemporaryShadowTextureDescriptor(width, height, bits);
             if (m_ForceShadowPointSampling)
             {
-                if (handle.rt.filterMode != FilterMode.Point)
+                if (handle.renderTexture.filterMode != FilterMode.Point)
                     return true;
             }
             else
             {
-                if (handle.rt.filterMode != FilterMode.Bilinear)
+                if (handle.renderTexture.filterMode != FilterMode.Bilinear)
                     return true;
             }
             return RenderingUtils.RTHandleNeedsReAlloc(handle, descriptor, m_ForceShadowPointSampling ? FilterMode.Point : FilterMode.Bilinear, TextureWrapMode.Clamp, true, anisoLevel, mipMapBias, name, false);

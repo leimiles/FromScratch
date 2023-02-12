@@ -121,7 +121,7 @@ namespace UnityEngine.Rendering.Universal.Internal
                 loadAction = RenderBufferLoadAction.Load;
 #endif
 
-            RenderingUtils.FinalBlit(cmd, ref cameraData, source, cameraTarget, loadAction, RenderBufferStoreAction.Store, m_BlitMaterial, source.rt?.filterMode == FilterMode.Bilinear ? 1 : 0);
+            RenderingUtils.FinalBlit(cmd, ref cameraData, source, cameraTarget, loadAction, RenderBufferStoreAction.Store, m_BlitMaterial, source.renderTexture?.filterMode == FilterMode.Bilinear ? 1 : 0);
         }
 
         private class PassData

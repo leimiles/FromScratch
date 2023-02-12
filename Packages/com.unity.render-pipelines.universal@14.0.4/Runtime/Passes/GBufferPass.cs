@@ -72,7 +72,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             if (cmd != null)
             {
                 var allocateGbufferDepth = true;
-                if (m_DeferredLights.UseRenderPass && (m_DeferredLights.DepthCopyTexture != null && m_DeferredLights.DepthCopyTexture.rt != null))
+                if (m_DeferredLights.UseRenderPass && (m_DeferredLights.DepthCopyTexture != null && m_DeferredLights.DepthCopyTexture.renderTexture != null))
                 {
                     m_DeferredLights.GbufferAttachments[m_DeferredLights.GbufferDepthIndex] = m_DeferredLights.DepthCopyTexture;
                     allocateGbufferDepth = false;

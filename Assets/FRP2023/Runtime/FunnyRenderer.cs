@@ -14,13 +14,19 @@ namespace UnityEngine.Funny.Rendering {
         // 需要渲染 opaques
         DrawObjectsPass m_DrawOpaqueForwardPass;
 
+        internal RenderTargetBufferSystem m_ColorBufferSystem;
+
         public FunnyRenderer(FunnyRendererData FunnyRendererData) : base(FunnyRendererData) {
             m_DrawSkyboxPass = new DrawSkyboxPass(RenderPassEvent.BeforeRenderingSkybox);
             m_DrawOpaqueForwardPass = new DrawObjectsPass(true, RenderPassEvent.BeforeRenderingOpaques);
+            m_ColorBufferSystem = new RenderTargetBufferSystem("_ColorAttachment");
         }
 
         void CreateCameraRenderTarget(ScriptableRenderContext renderContext, ref RenderTextureDescriptor descriptor, CommandBuffer commandBuffer, ref CameraData cameraData) {
             //ConfigureCameraColorTarget());
+            if (m_ColorBufferSystem.PeekBackBuffer() == null || m_ColorBufferSystem.PeekBackBuffer().nameID != BuiltinRenderTextureType.CameraTarget) {
+                Debug.Log("hahah");
+            }
         }
 
         /// <summary>
@@ -30,7 +36,9 @@ namespace UnityEngine.Funny.Rendering {
             ref CameraData cameraData = ref renderingData.cameraData;
             Camera camera = cameraData.camera;
             RenderTextureDescriptor cameraRenderTextureDescriptor = cameraData.cameraRenderTextureDescriptor;
-            //bool isOffscreenDepthTexture = cameraData
+
+            // todo 如果是 base 摄影机, 配置摄影机的渲染目标
+
             EnqueuePass(m_DrawOpaqueForwardPass);
             EnqueuePass(m_DrawSkyboxPass);
         }

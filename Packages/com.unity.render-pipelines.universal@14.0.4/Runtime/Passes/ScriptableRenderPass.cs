@@ -701,7 +701,7 @@ namespace UnityEngine.Rendering.Universal
         public void Blit(CommandBuffer cmd, RTHandle source, RTHandle destination, Material material = null, int passIndex = 0)
         {
             if (material == null)
-                Blitter.BlitCameraTexture(cmd, source, destination, bilinear: source.rt.filterMode == FilterMode.Bilinear);
+                Blitter.BlitCameraTexture(cmd, source, destination, bilinear: source.renderTexture.filterMode == FilterMode.Bilinear);
             else
                 Blitter.BlitCameraTexture(cmd, source, destination, material, passIndex);
         }

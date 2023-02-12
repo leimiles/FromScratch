@@ -407,7 +407,7 @@ namespace UnityEngine.Rendering
         {
             m_Width = width;
             m_Height = height;
-            m_Format = atlasTexture.rt.graphicsFormat;
+            m_Format = atlasTexture.renderTexture.graphicsFormat;
             m_AtlasTexture = atlasTexture;
             isAtlasTextureOwner = false;
 

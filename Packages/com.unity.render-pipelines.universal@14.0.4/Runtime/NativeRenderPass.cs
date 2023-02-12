@@ -157,7 +157,7 @@ namespace UnityEngine.Rendering.Universal
 
                 ScriptableRenderPass pass = m_ActiveRenderPassQueue[passIdx];
 
-                var samples = pass.overrideCameraTarget ? GetFirstAllocatedRTHandle(pass).rt.descriptor.msaaSamples :
+                var samples = pass.overrideCameraTarget ? GetFirstAllocatedRTHandle(pass).renderTexture.descriptor.msaaSamples :
                     (cameraData.cameraTargetTexture != null ? cameraData.cameraTargetTexture.descriptor.msaaSamples : cameraData.cameraTargetDescriptor.msaaSamples);
 
                 // only override existing non destructive actions
@@ -306,7 +306,7 @@ namespace UnityEngine.Rendering.Universal
 
                     AttachmentDescriptor currentAttachmentDescriptor;
                     var usesTargetTexture = cameraData.cameraTargetTexture != null;
-                    var depthOnly = (pass.colorAttachmentHandle.rt != null && IsDepthOnlyRenderTexture(pass.colorAttachmentHandle.rt)) || (usesTargetTexture && IsDepthOnlyRenderTexture(cameraData.cameraTargetTexture));
+                    var depthOnly = (pass.colorAttachmentHandle.renderTexture != null && IsDepthOnlyRenderTexture(pass.colorAttachmentHandle.renderTexture)) || (usesTargetTexture && IsDepthOnlyRenderTexture(cameraData.cameraTargetTexture));
 
                     int samples;
                     RenderTargetIdentifier colorAttachmentTarget;
@@ -314,8 +314,8 @@ namespace UnityEngine.Rendering.Universal
                     // while also creating a new RenderTargetIdentifier to ignore the current depth slice (which might get bypassed in XR setup eventually)
                     if (new RenderTargetIdentifier(passColorAttachment.nameID, 0, depthSlice: 0) != BuiltinRenderTextureType.CameraTarget)
                     {
-                        currentAttachmentDescriptor = new AttachmentDescriptor(depthOnly ? passColorAttachment.rt.descriptor.depthStencilFormat : passColorAttachment.rt.descriptor.graphicsFormat);
-                        samples = passColorAttachment.rt.descriptor.msaaSamples;
+                        currentAttachmentDescriptor = new AttachmentDescriptor(depthOnly ? passColorAttachment.renderTexture.descriptor.depthStencilFormat : passColorAttachment.renderTexture.descriptor.graphicsFormat);
+                        samples = passColorAttachment.renderTexture.descriptor.msaaSamples;
                         colorAttachmentTarget = passColorAttachment.nameID;
                     }
                     else // In this case we might be rendering the the targetTexture or the Backbuffer, so less information is available
@@ -391,7 +391,7 @@ namespace UnityEngine.Rendering.Universal
 
                 int validColorBuffersCount = m_RenderPassesAttachmentCount[currentPassHash];
 
-                var depthOnly = (renderPass.colorAttachmentHandle.rt != null && IsDepthOnlyRenderTexture(renderPass.colorAttachmentHandle.rt)) || (cameraData.cameraTargetTexture != null && IsDepthOnlyRenderTexture(cameraData.cameraTargetTexture));
+                var depthOnly = (renderPass.colorAttachmentHandle.renderTexture != null && IsDepthOnlyRenderTexture(renderPass.colorAttachmentHandle.renderTexture)) || (cameraData.cameraTargetTexture != null && IsDepthOnlyRenderTexture(cameraData.cameraTargetTexture));
                 bool useDepth = depthOnly || (!renderPass.overrideCameraTarget || (renderPass.overrideCameraTarget && renderPass.depthAttachmentHandle.nameID != BuiltinRenderTextureType.CameraTarget));// &&
 
                 var attachments =
@@ -626,7 +626,7 @@ namespace UnityEngine.Rendering.Universal
         {
             for (int i = 0; i < pass.colorAttachmentHandles.Length; ++i)
             {
-                if (pass.colorAttachmentHandles[i].rt != null)
+                if (pass.colorAttachmentHandles[i].renderTexture != null)
                     return pass.colorAttachmentHandles[i];
             }
             return pass.colorAttachmentHandles[0];
@@ -650,7 +650,7 @@ namespace UnityEngine.Rendering.Universal
         private RenderPassDescriptor InitializeRenderPassDescriptor(ref CameraData cameraData, ScriptableRenderPass renderPass)
         {
             RenderTextureDescriptor targetRT;
-            if (!renderPass.overrideCameraTarget || (renderPass.colorAttachmentHandle.rt == null && renderPass.depthAttachmentHandle.rt == null))
+            if (!renderPass.overrideCameraTarget || (renderPass.colorAttachmentHandle.renderTexture == null && renderPass.depthAttachmentHandle.renderTexture == null))
             {
                 targetRT = cameraData.cameraTargetDescriptor;
 
@@ -665,7 +665,7 @@ namespace UnityEngine.Rendering.Universal
             else
             {
                 var handle = GetFirstAllocatedRTHandle(renderPass);
-                targetRT = handle.rt != null ? handle.rt.descriptor : renderPass.depthAttachmentHandle.rt.descriptor;
+                targetRT = handle.renderTexture != null ? handle.renderTexture.descriptor : renderPass.depthAttachmentHandle.renderTexture.descriptor;
             }
 
             var depthTarget = renderPass.overrideCameraTarget ? renderPass.depthAttachmentHandle : cameraDepthTargetHandle;

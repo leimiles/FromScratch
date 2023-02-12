@@ -62,7 +62,7 @@ namespace UnityEngine.Rendering.Universal.Internal
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
         {
             var descriptor = renderingData.cameraData.cameraTargetDescriptor;
-            var isDepth = (destination.rt && destination.rt.graphicsFormat == GraphicsFormat.None);
+            var isDepth = (destination.renderTexture && destination.renderTexture.graphicsFormat == GraphicsFormat.None);
             descriptor.graphicsFormat = isDepth ? GraphicsFormat.D32_SFloat_S8_UInt : GraphicsFormat.R32_SFloat;
             descriptor.msaaSamples = 1;
             // This is a temporary workaround for Editor as not setting any depth here
@@ -157,7 +157,7 @@ namespace UnityEngine.Rendering.Universal.Internal
                         break;
                 }
 
-                if (copyToDepth || destination.rt.graphicsFormat == GraphicsFormat.None)
+                if (copyToDepth || destination.renderTexture.graphicsFormat == GraphicsFormat.None)
                     cmd.EnableShaderKeyword("_OUTPUT_DEPTH");
                 else
                     cmd.DisableShaderKeyword("_OUTPUT_DEPTH");

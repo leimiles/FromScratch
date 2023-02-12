@@ -102,7 +102,7 @@ namespace UnityEngine.Rendering.Universal.Internal
         /// <inheritdoc />
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
         {
-            if (destination.rt == null)
+            if (destination.renderTexture == null)
             {
                 RenderTextureDescriptor descriptor = renderingData.cameraData.cameraTargetDescriptor;
                 descriptor.msaaSamples = 1;
@@ -261,7 +261,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             if (cmd == null)
                 throw new ArgumentNullException("cmd");
 
-            if (destination.rt == null && destinationID != -1)
+            if (destination.renderTexture == null && destinationID != -1)
             {
                 cmd.ReleaseTemporaryRT(destinationID);
                 destination.Release();

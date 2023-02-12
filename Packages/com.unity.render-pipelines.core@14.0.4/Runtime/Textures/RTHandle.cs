@@ -63,7 +63,7 @@ namespace UnityEngine.Rendering
         /// <summary>
         /// RenderTexture associated with the RTHandle
         /// </summary>
-        public RenderTexture rt { get { return m_RT; } }
+        public RenderTexture renderTexture { get { return m_RT; } }
         /// <summary>
         /// RenderTargetIdentifier associated with the RTHandle
         /// </summary>
@@ -105,8 +105,8 @@ namespace UnityEngine.Rendering
             if (handle == null)
                 return null;
 
-            Debug.Assert(handle.m_ExternalTexture != null || handle.rt != null);
-            return (handle.rt != null) ? handle.rt : handle.m_ExternalTexture;
+            Debug.Assert(handle.m_ExternalTexture != null || handle.renderTexture != null);
+            return (handle.renderTexture != null) ? handle.renderTexture : handle.m_ExternalTexture;
         }
 
         /// <summary>
@@ -120,8 +120,8 @@ namespace UnityEngine.Rendering
             if (handle == null)
                 return null;
 
-            Debug.Assert(handle.rt != null, "RTHandle was created using a regular Texture and is used as a RenderTexture");
-            return handle.rt;
+            Debug.Assert(handle.renderTexture != null, "RTHandle was created using a regular Texture and is used as a RenderTexture");
+            return handle.renderTexture;
         }
 
         internal void SetRenderTexture(RenderTexture rt)
