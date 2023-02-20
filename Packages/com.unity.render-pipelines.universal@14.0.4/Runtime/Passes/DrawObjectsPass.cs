@@ -195,6 +195,7 @@ namespace UnityEngine.Rendering.Universal.Internal {
                             ctx.DrawRenderers(data.cullResults, ref ds, ref fs, ref rsb);
                         });
                 } else {
+                    // miles, 不透明物体就是在这里绘制的
                     context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref filterSettings, ref data.m_RenderStateBlock);
 
                     // Render objects that did not match any shader pass with error shader

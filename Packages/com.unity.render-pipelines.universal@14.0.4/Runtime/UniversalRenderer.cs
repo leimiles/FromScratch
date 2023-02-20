@@ -466,6 +466,7 @@ namespace UnityEngine.Rendering.Universal {
 
             // Special path for depth only offscreen cameras. Only write opaques + transparents.
             bool isOffscreenDepthTexture = cameraData.cameraTargetTexture != null && cameraData.cameraTargetTexture.format == RenderTextureFormat.Depth;
+            // Miles, isOffscreenDepthTexture always false
             if (isOffscreenDepthTexture) {
                 ConfigureCameraTarget(k_CameraTarget, k_CameraTarget);
                 SetupRenderPasses(in renderingData);
@@ -653,9 +654,11 @@ namespace UnityEngine.Rendering.Universal {
                 }
 
                 // Doesn't create texture for Overlay cameras as they are already overlaying on top of created textures.
+
+                // Miles, intermediateRenderTexture 总是真，无论 always 还是 auto
                 if (intermediateRenderTexture) {
-                    Debug.Log("intermediateRT");
                     // miles, 这次是初始化 cameraTargetHandle 的地方
+
                     CreateCameraRenderTarget(context, ref cameraTargetDescriptor, useDepthPriming, cmd, ref cameraData);
                 }
 

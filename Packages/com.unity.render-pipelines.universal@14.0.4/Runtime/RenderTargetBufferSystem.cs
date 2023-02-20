@@ -81,6 +81,8 @@ namespace UnityEngine.Rendering.Universal.Internal
             desc.msaaSamples = 1;
             RenderingUtils.ReAllocateIfNeeded(ref m_A.rtResolve, desc, m_FilterMode, TextureWrapMode.Clamp, name: m_A.name);
             RenderingUtils.ReAllocateIfNeeded(ref m_B.rtResolve, desc, m_FilterMode, TextureWrapMode.Clamp, name: m_B.name);
+
+            // miles, 只 set 了 resolve
             cmd.SetGlobalTexture(m_A.name, m_A.rtResolve);
             cmd.SetGlobalTexture(m_B.name, m_B.rtResolve);
         }

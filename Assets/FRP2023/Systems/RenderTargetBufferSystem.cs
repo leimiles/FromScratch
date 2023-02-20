@@ -109,10 +109,27 @@ namespace UnityEngine.Funny.Rendering {
         void ReAllocate(CommandBuffer commandBuffer) {
             var descriptor = m_Descriptor;
 
-            m_Descriptor.msaaSamples = m_ABuffer.msaaSamples;
-
-            if (m_Descriptor.msaaSamples > 1) {
+            // a buffer msaa rt 分配
+            descriptor.msaaSamples = m_ABuffer.msaaSamples;
+            if (descriptor.msaaSamples > 1) {
+                RenderingUtils.ReAllocateIfNeeded(ref m_ABuffer.rtHandle_MSAA, descriptor, m_FilterMode, TextureWrapMode.Clamp, name: m_ABuffer.name);
             }
+
+            // b buffer msaa rt 分配
+            descriptor.msaaSamples = m_BBuffer.msaaSamples;
+            if (descriptor.msaaSamples > 1) {
+                RenderingUtils.ReAllocateIfNeeded(ref m_BBuffer.rtHandle_MSAA, descriptor, m_FilterMode, TextureWrapMode.Clamp, name: m_BBuffer.name);
+            }
+
+            // a buffer 非 msaa rt 分配
+            descriptor.msaaSamples = 1;
+            RenderingUtils.ReAllocateIfNeeded(ref m_ABuffer.rtHandle_Resolve, descriptor, m_FilterMode, TextureWrapMode.Clamp, name: m_ABuffer.name);
+            // b buffer 非 msaa rt 分配
+            RenderingUtils.ReAllocateIfNeeded(ref m_BBuffer.rtHandle_Resolve, descriptor, m_FilterMode, TextureWrapMode.Clamp, name: m_BBuffer.name);
+
+            commandBuffer.SetGlobalTexture(m_ABuffer.name, m_ABuffer.rtHandle_Resolve);
+            commandBuffer.SetGlobalTexture(m_BBuffer.name, m_BBuffer.rtHandle_Resolve);
+
         }
 
     }

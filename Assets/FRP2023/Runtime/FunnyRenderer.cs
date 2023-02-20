@@ -19,14 +19,15 @@ namespace UnityEngine.Funny.Rendering {
         public FunnyRenderer(FunnyRendererData FunnyRendererData) : base(FunnyRendererData) {
             m_DrawSkyboxPass = new DrawSkyboxPass(RenderPassEvent.BeforeRenderingSkybox);
             m_DrawOpaqueForwardPass = new DrawObjectsPass(true, RenderPassEvent.BeforeRenderingOpaques);
-            m_ColorBufferSystem = new RenderTargetBufferSystem("_ColorAttachment");
+            //m_ColorBufferSystem = new RenderTargetBufferSystem("_ColorAttachment");
         }
 
         void CreateCameraRenderTarget(ScriptableRenderContext renderContext, ref RenderTextureDescriptor descriptor, CommandBuffer commandBuffer, ref CameraData cameraData) {
             //ConfigureCameraColorTarget());
+
             if (m_ColorBufferSystem.PeekBackBuffer() == null || m_ColorBufferSystem.PeekBackBuffer().nameID != BuiltinRenderTextureType.CameraTarget) {
-                Debug.Log("hahah");
             }
+
         }
 
         /// <summary>

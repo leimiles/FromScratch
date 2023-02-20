@@ -48,7 +48,7 @@ namespace UnityEngine.Funny.Rendering {
         }
 
         private static void ExecutePass(ScriptableRenderContext renderContext, PassData passData, ref RenderingData renderingData, bool yFlip) {
-
+            //renderContext.DrawRenderers(renderingData.cullingResults, ref drawSettings, ref filterSettings, ref data.m_RenderStateBlock);
         }
 
         private static void CameraSetup(CommandBuffer commandBuffer, PassData passData, ref RenderingData renderingData) {

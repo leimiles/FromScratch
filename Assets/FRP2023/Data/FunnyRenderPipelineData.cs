@@ -55,12 +55,6 @@ namespace UnityEngine.Funny.Rendering {
         /// </summary>
         public bool IsCameraProjectionMatrixFlipped() {
             if (ScriptableRenderer.currentRenderer != null) {
-                var targetHandleId = ScriptableRenderer.currentRenderer.cameraColorTargetHandle?.nameID;
-                bool renderingToBackBufferTarget = targetHandleId == BuiltinRenderTextureType.CameraTarget;
-                if (ScriptableRenderer.currentRenderer.cameraColorTargetHandle == null) {
-                    Debug.Log("todo not possible");
-                }
-                bool renderingToTexture = !renderingToBackBufferTarget || cameraTargetTexture != null;
                 return SystemInfo.graphicsUVStartsAtTop;
             }
             return true;
