@@ -16,9 +16,9 @@ namespace UnityEngine.Funny.Rendering {
 
         internal RenderTargetBufferSystem m_ColorBufferSystem;
 
-        public FunnyRenderer(FunnyRendererData FunnyRendererData) : base(FunnyRendererData) {
+        public FunnyRenderer(FunnyRendererData funnyRendererData) : base(funnyRendererData) {
             m_DrawSkyboxPass = new DrawSkyboxPass(RenderPassEvent.BeforeRenderingSkybox);
-            m_DrawOpaqueForwardPass = new DrawObjectsPass(true, RenderPassEvent.BeforeRenderingOpaques);
+            m_DrawOpaqueForwardPass = new DrawObjectsPass(true, RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, funnyRendererData.opaqueLayerMask);
             //m_ColorBufferSystem = new RenderTargetBufferSystem("_ColorAttachment");
         }
 

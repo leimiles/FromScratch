@@ -1,14 +1,12 @@
 using System;
 using System.Linq;
 
-namespace UnityEngine.Rendering.Universal
-{
+namespace UnityEngine.Rendering.Universal {
     /// <summary>
     /// Options to get a shader path to URP shaders when calling ShaderUtils.GetShaderGUID();
     /// <see cref="ShaderUtils"/>.
     /// </summary>
-    public enum ShaderPathID
-    {
+    public enum ShaderPathID {
         /// <summary>
         /// Use this for URP Lit shader.
         /// </summary>
@@ -69,8 +67,7 @@ namespace UnityEngine.Rendering.Universal
     /// <summary>
     /// Various utility functions for shaders in URP.
     /// </summary>
-    public static class ShaderUtils
-    {
+    public static class ShaderUtils {
         static readonly string[] s_ShaderPaths =
         {
             "Universal Render Pipeline/Lit",
@@ -91,8 +88,7 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="id">The URP Shader Path ID.</param>
         /// <returns>The path to the URP shader.</returns>
-        public static string GetShaderPath(ShaderPathID id)
-        {
+        public static string GetShaderPath(ShaderPathID id) {
             int index = (int)id;
             int arrayLength = s_ShaderPaths.Length;
             if (arrayLength > 0 && index >= 0 && index < arrayLength)
@@ -107,8 +103,7 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="path">The path to the shader.</param>
         /// <returns>The URP Shader Path ID.</returns>
-        public static ShaderPathID GetEnumFromPath(string path)
-        {
+        public static ShaderPathID GetEnumFromPath(string path) {
             var index = Array.FindIndex(s_ShaderPaths, m => m == path);
             return (ShaderPathID)index;
         }
@@ -118,14 +113,14 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="shader">The shader.</param>
         /// <returns>True or false if it's a URP shader or not.</returns>
-        public static bool IsLWShader(Shader shader)
-        {
+        public static bool IsLWShader(Shader shader) {
             return s_ShaderPaths.Contains(shader.name);
         }
 
 #if UNITY_EDITOR
         static readonly string[] s_ShaderGUIDs =
         {
+            // lit
             "933532a4fcc9baf4fa0491de14d08ed7",
             "8d2bb70cbf9db8d4da26e15b26e74248",
             "650dd9526735d5b46b79224bc6e94025",
@@ -144,8 +139,7 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         /// <param name="id">ID of shader path.</param>
         /// <returns>GUID for the shader.</returns>
-        public static string GetShaderGUID(ShaderPathID id)
-        {
+        public static string GetShaderGUID(ShaderPathID id) {
             int index = (int)id;
             int arrayLength = s_ShaderGUIDs.Length;
             if (arrayLength > 0 && index >= 0 && index < arrayLength)

@@ -7,6 +7,16 @@ namespace UnityEngine.Funny.Rendering {
     /// 用于保存 renderer 在执行时需要用到的资源
     /// </summary>
     public abstract class ScriptableRendererData : ScriptableObject {
+
+        internal bool isInvalidated { get; set; }
+
+        /// <summary>
+        /// 使用 set dirty 让 render passes 重新创建
+        /// </summary>
+        public new void SetDirty() {
+            isInvalidated = true;
+        }
+
         /// <summary>
         /// 由子类 rendererData 实现具体 renderer 的实例
         /// </summary>
@@ -18,6 +28,15 @@ namespace UnityEngine.Funny.Rendering {
         internal ScriptableRenderer InternalCreateRenderer() {
             return Create();
         }
+#if UNITY_EDITOR
+        internal virtual Material GetDefaultMaterial(DefaultMaterialType materialType) {
+            return null;
+        }
+
+        internal virtual Shader GetDefaultShader() {
+            return null;
+        }
+#endif
 
     }
 }

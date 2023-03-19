@@ -31,6 +31,33 @@ namespace UnityEngine.Funny.Rendering {
 
         }
 
+        /// <summary>
+        /// 根据 shadertagid，创建并返回 drawingSettings
+        /// </summary>
+        static public DrawingSettings CreateDrawingSettings(ShaderTagId shaderTagId, ref RenderingData renderingData, SortingCriteria sortingCriteria) {
+            SortingSettings sortingSettings = new SortingSettings(renderingData.cameraData.camera) { criteria = sortingCriteria };
+            DrawingSettings drawingSettings = new DrawingSettings(shaderTagId, sortingSettings) {
+                enableInstancing = renderingData.cameraData.cameraType == CameraType.Preview ? false : true
+            };
+            return drawingSettings;
+        }
+
+        /// <summary>
+        /// 根据 shadertagid 列表，创建并返回 drawingSettings
+        /// </summary>
+        static public DrawingSettings CreateDrawingSettings(List<ShaderTagId> shaderTagIds,
+            ref RenderingData renderingData, SortingCriteria sortingCriteria) {
+            if (shaderTagIds == null || shaderTagIds.Count == 0) {
+                // if no shaderTagIds, create default
+                return CreateDrawingSettings(new ShaderTagId("SRPDefaultUnlit"), ref renderingData, sortingCriteria);
+            }
+
+            DrawingSettings drawingSettings = CreateDrawingSettings(shaderTagIds[0], ref renderingData, sortingCriteria);
+            for (int i = 1; i < shaderTagIds.Count; ++i) {
+                drawingSettings.SetShaderPassName(i, shaderTagIds[i]);
+            }
+            return drawingSettings;
+        }
 
         /// <summary>
         /// 根据条件判断是否需要重新分配内存

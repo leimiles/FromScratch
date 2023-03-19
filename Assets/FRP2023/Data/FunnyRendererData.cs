@@ -8,6 +8,20 @@ namespace UnityEngine.Funny.Rendering {
     /// </summary>
     public class FunnyRendererData : ScriptableRendererData, ISerializationCallbackReceiver {
 
+        [SerializeField] LayerMask m_OpaqueLayerMask = -1;
+
+        /// <summary>
+        /// 设置不透明对象的过滤方式
+        /// </summary>
+        public LayerMask opaqueLayerMask {
+            get => m_OpaqueLayerMask;
+            set {
+                SetDirty();
+                m_OpaqueLayerMask = value;
+            }
+
+        }
+
         /// <summary>
         /// 实现 FunnyRenderer 实例
         /// </summary>
